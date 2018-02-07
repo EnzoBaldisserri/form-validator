@@ -1,0 +1,29 @@
+{
+  "name": "form-validator",
+  "version": "0.0.0",
+  "description": "The javascript form validator of your needs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "4.9",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "2.7",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1"
+  },
+  "keywords": [
+    "form",
+    "validator",
+    "validate",
+    "javascript",
+    "client",
+    "front-end"
+  ],
+  "author": "Enzo Baldisserri",
+  "license": "MIT"
+}
