@@ -40,10 +40,10 @@ class Input {
 
     /**
      * HTML input element.
-     * @member Input#el
+     * @member Input#$el
      * @type {HTMLInputElement}
      */
-    this.el = el;
+    this.$el = el;
 
     if (!type) {
       const typeAttr = el.getAttribute('type');
@@ -80,6 +80,65 @@ class Input {
      * @prop {String} invalidClass
      */
     this.style = style;
+
+    this.init();
+  }
+
+  init() {
+    const { changeProperty } = this.type;
+
+    if (changeProperty) {
+      this.$el.addEventListener(changeProperty, this.handleChange);
+    }
+  }
+
+  handleChange = (event) => {
+    const {
+      validators,
+      onChange,
+      style: { strict, validClass, invalidClass },
+    } = this;
+
+    const { target } = event;
+    const { value } = target;
+
+    const valids = [];
+    const invalids = [];
+
+    Object.entries(validators).forEach((entry) => {
+      const name = entry[0];
+      const validator = entry[1];
+
+      if (validator(value)) {
+        valids.push(name);
+      } else {
+        invalids.push(name);
+      }
+    });
+
+    const isValid = !invalids.length;
+    if (isValid) {
+      target.classList.remove(invalidClass);
+      target.classList.add(validClass);
+    } else {
+      target.classList.remove(validClass);
+      target.classList.add(invalidClass);
+    }
+
+    const canceled = !isValid && strict;
+    if (canceled) {
+      event.preventDefault();
+    }
+
+    if (onChange) {
+      onChange(event, value, {
+        isValid,
+        valids,
+        invalids,
+        strict,
+        canceled,
+      });
+    }
   }
 
   /**
