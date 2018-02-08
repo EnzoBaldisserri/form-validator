@@ -1,4 +1,4 @@
-import defaultValidations from './defaultValidations';
+import defaultValidators from './defaultValidators';
 import Input from './input';
 
 /**
@@ -8,7 +8,7 @@ import Input from './input';
 class FormValidator {
   static defaults = {
     fields: [],
-    validations: defaultValidations,
+    validators: defaultValidators,
     style: {
       strict: false,
       validClass: 'valid',
@@ -23,7 +23,7 @@ class FormValidator {
   constructor(options) {
     const {
       fields,
-      validations,
+      validators,
       style,
     } = Object.assign({}, this.defaults, options);
 
@@ -38,18 +38,21 @@ class FormValidator {
     this.style = style;
 
     /**
-     * Custom validations for the validator.
-     * @member FormValidator#validations
+     * Custom validators for the validator.
+     * @member FormValidator#validators
      * @type {Array.<Function>}
      */
-    this.validations = validations;
+    this.validators = validators;
 
     /**
      * Input fields to be validated.
      * @member FormValidator#fields
      * @type {Array.<Input>}
      */
-    this.fields = fields.map(field => new Input(field, this.style));
+    this.fields = fields.map(field => new Input(
+      Object.assign(field, { validators: fields.validation.map(v => validators[v]) }),
+      this.style,
+    ));
   }
 }
 

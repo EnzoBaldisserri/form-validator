@@ -1,4 +1,5 @@
 import InputTypes from './inputTypes';
+import defaultValidators from './defaultValidators';
 
 /**
  * Representation of an HTML input element,
@@ -10,7 +11,7 @@ class Input {
     el: null,
     type: null,
     onChange: null,
-    validations: [],
+    validators: [],
     style: {
       strict: false,
       validClass: null,
@@ -22,14 +23,14 @@ class Input {
    * Creates an Input instance.
    *
    * @param {Object} options
-   * @param {Object} formStyle The style of the containing validator
+   * @param {Object} formStyle
    */
   constructor(options, formStyle) {
     const {
       el,
       type,
       onChange,
-      validations,
+      validators,
       style,
     } = Object.assign({}, this.defaults, { style: formStyle }, options);
 
@@ -47,17 +48,22 @@ class Input {
     if (!type) {
       const typeAttr = el.getAttribute('type');
       this.type = typeAttr ? this.attrToType(typeAttr) : InputTypes.NONE;
+    } else {
+      this.type = type;
     }
 
+    const validations = Object.keys(validators);
+
     /**
-     * Validations for the input.
-     * @member Input#validations
+     * Validators for the input.
+     * @member Input#validators
      * @type {Array.<function>}
      */
-    this.validations = [
-      ...this.type.validations.filter(validation => !validations.contains(validation)),
-      ...validations,
-    ];
+    this.validators = Object.assign(
+      validators,
+      this.getValidators(this.type.validations.filter(validation =>
+        !validations.contains(validation))),
+    );
 
     /**
      * Input value change callback.
@@ -67,7 +73,7 @@ class Input {
     this.onChange = onChange;
 
     /**
-     * Style of the input.
+     * Style for the input.
      * @member Input#style
      * @prop {Boolean} strict
      * @prop {String} validClass
@@ -79,8 +85,8 @@ class Input {
   /**
    * Return the internal representation of a type of input.
    *
-   * @param {String} type A type attribute
-   * @type {Object}
+   * @param {String} type A value of the type attribute
+   * @return {Object}
    */
   static attrToType = (type) => {
     switch (type.toLowerCase()) {
@@ -102,6 +108,15 @@ class Input {
         return InputTypes.NONE;
     }
   }
+
+  /**
+   * Get validators from a list of validations.
+   *
+   * @param {Array.<String>} validations
+   * @return {Object}
+   */
+  static getValidators = validations =>
+    validations.map(validation => defaultValidators[validation]);
 }
 
 export default Input;

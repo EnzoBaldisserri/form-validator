@@ -5,15 +5,15 @@ export default {
     validations: ['EMPTY'],
   },
   TEXT: {
-    changeProperty: 'keyup',
+    changeProperty: 'keypress',
     validations: ['NO_EMPTY'],
   },
   EMAIL: {
-    changeProperty: 'keyup',
+    changeProperty: 'keypress',
     validations: ['NO_EMPTY'],
   },
   PASSWORD: {
-    changeProperty: 'keyup',
+    changeProperty: 'keypress',
     validations: ['NO_EMPTY'],
   },
   NUMBER: {
