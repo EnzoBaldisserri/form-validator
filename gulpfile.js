@@ -1,33 +1,47 @@
-/* eslint no-console: off */
 const gulp = require('gulp');
 const pump = require('pump');
 const babel = require('gulp-babel');
-const concat = require('gulp-concat');
+const webpack = require('gulp-webpack');
 const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
 const browserSync = require('browser-sync').create();
 
-const { reload } = browserSync;
-
-gulp.task('watch', ['serve'], () => {
-  gulp.watch('./src/*.js', ['build']);
-  gulp.watch('./examples/*.html').on('change', reload);
+gulp.task('watch', ['serve', 'build'], () => {
+  gulp.watch('src/*.js', ['build'], browserSync.reload);
+  gulp.watch('examples/*.html').on('change', browserSync.reload);
 });
 
 gulp.task('serve', ['build'], () => {
   browserSync.init({
     server: {
-      baseDir: './examples',
+      baseDir: './',
+      index: 'examples/index.html',
     },
   });
 });
 
-gulp.task('build', ['babel'], (cb) => {
+gulp.task('build', (cb) => {
   pump(
     [
-      gulp.src('./bin/*.js'),
-      concat('form-validator.js'),
+      gulp.src('bin/formValidator.js'),
+      webpack({
+        output: {
+          filename: 'form-validator.js',
+        },
+      }),
+      gulp.dest('dist/'),
+    ],
+    cb,
+  );
+});
+
+gulp.task('compress', ['build'], (cb) => {
+  pump(
+    [
+      gulp.src('dist/form-validator.js'),
       uglify(),
-      gulp.dest('./dist/'),
+      rename({ suffix: '.min' }),
+      gulp.dest('dist'),
     ],
     cb,
   );
@@ -38,7 +52,7 @@ gulp.task('babel', (cb) => {
     [
       gulp.src('src/*.js'),
       babel(),
-      gulp.dest('bin'),
+      gulp.dest('bin/'),
     ],
     cb,
   );
