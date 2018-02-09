@@ -1,5 +1,5 @@
 import InputTypes from './inputTypes';
-import { defaultValidators } from './validators';
+import { fromValidations } from './validators';
 
 /**
  * Representation of an HTML input element,
@@ -63,8 +63,11 @@ class Input {
      */
     this.validators = Object.assign(
       validators,
-      this.getValidators(this.type.validations.filter(validation =>
-        !validations.contains(validation))),
+      fromValidations(
+        this.type.validations.filter(validation =>
+          !validations.contains(validation)),
+        validators,
+      ),
     );
 
     /**
@@ -91,6 +94,7 @@ class Input {
 
     if (changeProperty) {
       this.$el.addEventListener(changeProperty, this.handleChange);
+      this.$el.addEventListener('blur', this.handleChange);
     }
   }
 
@@ -169,15 +173,6 @@ class Input {
         return InputTypes.NONE;
     }
   }
-
-  /**
-   * Get validators from a list of validations.
-   *
-   * @param {Array.<String>} validations
-   * @return {Object}
-   */
-  static getValidators = validations =>
-    validations.map(validation => defaultValidators[validation]);
 }
 
 export default Input;
