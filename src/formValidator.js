@@ -1,4 +1,4 @@
-import defaultValidators from './defaultValidators';
+import { fromValidations, defaultValidators } from './validators';
 import Input from './input';
 
 /**
@@ -50,7 +50,7 @@ class FormValidator {
      * @type {Array.<Input>}
      */
     this.fields = fields.map(field => new Input(
-      Object.assign(field, { validators: fields.validation.map(v => validators[v]) }),
+      Object.assign(field, { validators: fromValidations(field.validations, this.validators) }),
       this.style,
     ));
   }

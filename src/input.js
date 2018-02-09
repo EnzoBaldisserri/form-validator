@@ -1,5 +1,5 @@
 import InputTypes from './inputTypes';
-import defaultValidators from './defaultValidators';
+import { defaultValidators } from './validators';
 
 /**
  * Representation of an HTML input element,
@@ -48,6 +48,8 @@ class Input {
     if (!type) {
       const typeAttr = el.getAttribute('type');
       this.type = typeAttr ? this.attrToType(typeAttr) : InputTypes.NONE;
+    } else if (typeof type === 'string') {
+      this.type = this.attrToType(type);
     } else {
       this.type = type;
     }
