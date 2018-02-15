@@ -1,20 +1,21 @@
-import { fromValidations, defaultValidators } from './validators';
+import { defaultValidators, fromValidations } from './validators';
 import Input from './input';
 
 /**
- * FormValidator
+ * Validator
  * @class
  */
-class FormValidator {
+class Validator {
   static defaults = {
     fields: [],
     validators: defaultValidators,
-    style: {
-      strict: false,
-      validClass: 'valid',
-      invalidClass: 'invalid',
-    },
   };
+
+  static defaultStyle = {
+    strict: false,
+    validClass: 'valid',
+    invalidClass: 'invalid',
+  }
 
   /**
    * Initialize the form validator.
@@ -25,7 +26,7 @@ class FormValidator {
       fields,
       validators,
       style,
-    } = Object.assign({}, this.defaults, options);
+    } = Object.assign({}, Validator.defaults, options);
 
     /**
      * General style of the form validator.
@@ -35,7 +36,7 @@ class FormValidator {
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = style;
+    this.style = Object.assign({}, Validator.defaultStyle, style);
 
     /**
      * Custom validators for the validator.
@@ -56,4 +57,5 @@ class FormValidator {
   }
 }
 
-export default FormValidator;
+/* eslint import/prefer-default-export: off */
+export { Validator };
