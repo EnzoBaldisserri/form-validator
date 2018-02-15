@@ -1,19 +1,19 @@
 export default {
   NONE: {},
   EMPTY: {
-    changeProperty: '',
+    changeProperty: 'input',
     validations: ['EMPTY'],
   },
   TEXT: {
-    changeProperty: 'keypress',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   EMAIL: {
-    changeProperty: 'keypress',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   PASSWORD: {
-    changeProperty: 'keypress',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   NUMBER: {

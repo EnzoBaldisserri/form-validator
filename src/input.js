@@ -32,7 +32,7 @@ class Input {
       onChange,
       validators,
       style,
-    } = Object.assign({}, this.defaults, { style: formStyle }, options);
+    } = Object.assign({}, Input.defaults, { style: formStyle }, options);
 
     if (!el || !(el instanceof HTMLInputElement)) {
       throw new Error(`Element ${el} is not an input field`);
@@ -47,28 +47,25 @@ class Input {
 
     if (!type) {
       const typeAttr = el.getAttribute('type');
-      this.type = typeAttr ? this.attrToType(typeAttr) : InputTypes.NONE;
+      this.type = typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
     } else if (typeof type === 'string') {
       this.type = this.attrToType(type);
     } else {
       this.type = type;
     }
 
-    const validations = Object.keys(validators);
+    const userValidations = Object.keys(validators);
 
     /**
      * Validators for the input.
      * @member Input#validators
      * @type {Array.<function>}
      */
-    this.validators = Object.assign(
-      validators,
-      fromValidations(
-        this.type.validations.filter(validation =>
-          !validations.contains(validation)),
-        validators,
-      ),
-    );
+    this.validators = {
+      ...validators, // User defined validators
+      ...fromValidations(this.type.validations.filter(validation =>
+        !userValidations.includes(validation))), // Default validators from input type
+    };
 
     /**
      * Input value change callback.
@@ -106,15 +103,12 @@ class Input {
     } = this;
 
     const { target } = event;
-    const { value } = target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
 
     const valids = [];
     const invalids = [];
 
-    Object.entries(validators).forEach((entry) => {
-      const name = entry[0];
-      const validator = entry[1];
-
+    Object.entries(validators).forEach(([name, validator]) => {
       if (validator(value)) {
         valids.push(name);
       } else {
@@ -134,6 +128,7 @@ class Input {
     const canceled = !isValid && strict;
     if (canceled) {
       event.preventDefault();
+      // TODO Make operation cancel work
     }
 
     if (onChange) {
