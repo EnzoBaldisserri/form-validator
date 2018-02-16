@@ -17,19 +17,19 @@ export default {
     validations: ['NO_EMPTY'],
   },
   NUMBER: {
-    changeProperty: 'change',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   DATE: {
-    changeProperty: 'change',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   TIME: {
-    changeProperty: 'change',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
   DATETIME: {
-    changeProperty: 'change',
+    changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
 };

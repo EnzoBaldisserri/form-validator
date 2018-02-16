@@ -1,5 +1,6 @@
 import { defaultValidators, fromValidations } from './validators';
 import Input from './input';
+import InputTypes from './inputTypes';
 
 /**
  * Validator
@@ -57,5 +58,7 @@ class Validator {
   }
 }
 
-/* eslint import/prefer-default-export: off */
-export { Validator };
+export {
+  Validator,
+  InputTypes,
+};
