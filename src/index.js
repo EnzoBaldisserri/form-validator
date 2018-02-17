@@ -21,6 +21,7 @@ class Validator {
       fields,
       validators,
       style,
+      onValidityChange,
     } = options;
 
     if (!fields) {
@@ -30,7 +31,7 @@ class Validator {
     /**
      * General style of the form validator.
      *
-     * @member FormValidator#style
+     * @member Validator#style
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
@@ -38,20 +39,59 @@ class Validator {
 
     /**
      * Custom validators for the validator.
-     * @member FormValidator#validators
+     * @member Validator#validators
      * @type {Array.<Function>}
      */
     this.validators = Object.assign({}, defaultValidators, validators);
 
     /**
      * Input fields to be validated.
-     * @member FormValidator#fields
+     * @member Validator#fields
      * @type {Array.<Input>}
      */
     this.fields = fields.map(field => new Input(
+      this,
       Object.assign(field, { validators: fromValidations(field.validations, this.validators) }),
-      this.style,
     ));
+
+    /**
+     * Function called when validity of the form changes.
+     *
+     * @member Validator#onValidityChange
+     * @type {Function}
+     */
+    this.onValidityChange = onValidityChange;
+
+    /**
+     * Correspond to the validity of the form.
+     *
+     * @member Validator#valid
+     * @type {Boolean}
+     */
+    this.valid = null;
+
+    this.init();
+  }
+
+  init() {
+    this.updateValidity();
+  }
+
+  updateValidity = () => {
+    const {
+      fields,
+      onValidityChange,
+    } = this;
+
+    const valid = fields.reduce((formValid, field) =>
+      formValid && field.valid, true);
+
+    if (this.valid !== valid) {
+      this.valid = valid;
+      if (onValidityChange) {
+        onValidityChange(valid);
+      }
+    }
   }
 }
 

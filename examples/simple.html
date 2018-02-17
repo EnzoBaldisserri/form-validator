@@ -28,26 +28,30 @@
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
           <form action="#">
-            <div class="group-control">
+            <div class="form-group">
               <label for="firstname">First name</label>
               <input type="text" id="firstname" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="surname">Surname</label>
               <input type="text" id="surname" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="email">Email</label>
               <input type="email" id="email" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="birthdate">Birthdate</label>
-              <input type="date" id="birthdate" class="form-control">
+              <input type="date" id="birthdate" class="form-control" value="">
+              <small class="form-text text-muted">
+                Change the initial value to see the validator initializing the validity classes.
+              </small>
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="age">Age</label>
               <input type="number" id="age" class="form-control" readonly>
             </div>
+            <button type="submit" id="send" class="btn btn-primary">Send</button>
           </form>
         </div>
       </div>
@@ -61,12 +65,74 @@
       var Validator = FormValidator.Validator;
       var InputTypes = FormValidator.InputTypes;
 
-      // For age to be between 18 and 100
-      var minDate = new Date();
-      minDate.setFullYear(minDate.getFullYear() - 101);
-      var maxDate = new Date();
-      maxDate.setFullYear(maxDate.getFullYear() - 18);
+      // Choose minimum and maximum age
+      var ageProperties = {
+        min: 18,
+        max: 100,
+      };
 
+      // Compute minimum and maximum date
+      // for age to be between minimum and maximum
+      var birthdateProperties = {
+        min: new Date(),
+        max: new Date(),
+      };
+
+      birthdateProperties.min.setFullYear(
+        birthdateProperties.min.getFullYear() - (ageProperties.max + 1));
+
+      birthdateProperties.max.setFullYear(
+        birthdateProperties.max.getFullYear() - ageProperties.min);
+
+      // Compute current age
+      var computeAge = function(birthdate) {
+        if (Number.isNaN(birthdate.getTime())) {
+          return false;
+        }
+
+        var now = new Date();
+
+        var birthMonth = birthdate.getMonth();
+        var nowMonth = now.getMonth();
+
+        return now.getFullYear() - birthdate.getFullYear()
+          - (birthMonth === nowMonth
+            ? now.getDate() < birthdate.getDate()
+            : nowMonth < birthMonth);
+      }
+
+      // Function called when initializing the field 'birthdate'
+      var onBirthdateInit = function(value, properties) {
+        if (value && properties.isValid) {
+          var birthdate = new Date(value);
+          var age = computeAge(birthdate);
+
+          if (age !== false) {
+            var $age = document.getElementById('age');
+            $age.value = age;
+            $age.dispatchEvent(new Event('input'));
+
+            return true;
+          }
+        }
+        return false;
+      }
+
+      // Function called when the value of the field 'birthdate' changes
+      var onBirthdateChange = function(event, value, properties) {
+        var birthdate = new Date(value);
+        var age = computeAge(birthdate);
+
+        if (age === false) {
+          return false;
+        }
+
+        var $age = document.getElementById('age');
+        $age.value = age;
+        $age.dispatchEvent(new Event('input'));
+      }
+
+      // Initialization of the form validator
       new Validator({
         fields: [
           {
@@ -91,35 +157,22 @@
           {
             el: document.getElementById('birthdate'),
             validations: [
-              ['DATE_BETWEEN', { min: minDate, max: maxDate }],
+              ['DATE_BETWEEN', birthdateProperties],
             ],
-            onChange: (event, value, params) => {
-                const now = new Date();
-                const birthdate = new Date(value);
-
-                if (!Number.isNaN(birthdate.getTime())) {
-                  const birthMonth = birthdate.getMonth();
-                  const nowMonth = now.getMonth();
-
-                  const age = now.getFullYear() - birthdate.getFullYear()
-                    - (birthMonth === nowMonth
-                      ? now.getDate() < birthdate.getDate()
-                      : nowMonth < birthMonth);
-
-                  const $age = document.getElementById('age');
-                  $age.value = age;
-                  $age.dispatchEvent(new Event('input'));
-                }
-            }
+            onInit: onBirthdateInit,
+            onChange: onBirthdateChange,
           },
           {
             el: document.getElementById('age'),
             type: InputTypes.POSITIVE_NUMBER,
             validations: [
-              ['VALUE_IN', { min: 18, max: 100 }],
+              ['VALUE_IN', ageProperties],
             ],
           },
         ],
+        onValidityChange: function(valid) {
+          document.getElementById('send').disabled = !valid;
+        },
         style: {
           validClass: 'is-valid',
           invalidClass: 'is-invalid',
