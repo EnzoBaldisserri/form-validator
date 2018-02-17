@@ -153,7 +153,7 @@ class Input {
       case 'text':
         return InputTypes.TEXT;
       case 'email':
-        return InputTypes.MAIL;
+        return InputTypes.EMAIL;
       case 'password':
         return InputTypes.PASSWORD;
       case 'number':

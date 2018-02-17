@@ -10,7 +10,10 @@ export default {
   },
   EMAIL: {
     changeProperty: 'input',
-    validations: ['NO_EMPTY'],
+    validations: [
+      'NO_EMPTY',
+      'EMAIL',
+    ],
   },
   PASSWORD: {
     changeProperty: 'input',
@@ -20,16 +23,23 @@ export default {
     changeProperty: 'input',
     validations: ['NO_EMPTY'],
   },
-  DATE: {
+  POSITIVE_NUMBER: {
     changeProperty: 'input',
+    validations: [
+      'NO_EMPTY',
+      ['VALUE_IN', { min: 0 }],
+    ],
+  },
+  DATE: {
+    changeProperty: 'change',
     validations: ['NO_EMPTY'],
   },
   TIME: {
-    changeProperty: 'input',
+    changeProperty: 'change',
     validations: ['NO_EMPTY'],
   },
   DATETIME: {
-    changeProperty: 'input',
+    changeProperty: 'change',
     validations: ['NO_EMPTY'],
   },
 };
