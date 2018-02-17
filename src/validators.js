@@ -26,7 +26,7 @@ function defaultRegExpValidator(input, params, regExp) {
 
 const defaultValidators = {
   EMPTY: value => !value.length,
-  NO_EMPTY: value => value.length,
+  NOT_EMPTY: value => value.length,
   EMAIL: value => regExps.email.test(value),
   VALUE_IN: ({ min, max }) => value =>
     (min === undefined || +value >= min) && (max === undefined || +value <= max),

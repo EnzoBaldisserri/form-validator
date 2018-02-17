@@ -10,8 +10,9 @@ class Input {
   static defaults = {
     el: null,
     type: null,
-    onChange: null,
     validators: [],
+    onInit: null,
+    onChange: null,
   }
 
   static defaultStyle = {
