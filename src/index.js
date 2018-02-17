@@ -7,11 +7,6 @@ import InputTypes from './inputTypes';
  * @class
  */
 class Validator {
-  static defaults = {
-    fields: [],
-    validators: defaultValidators,
-  };
-
   static defaultStyle = {
     validClass: 'valid',
     invalidClass: 'invalid',
@@ -26,7 +21,11 @@ class Validator {
       fields,
       validators,
       style,
-    } = Object.assign({}, Validator.defaults, options);
+    } = options;
+
+    if (!fields) {
+      throw new Error('No fields defined');
+    }
 
     /**
      * General style of the form validator.
@@ -42,7 +41,7 @@ class Validator {
      * @member FormValidator#validators
      * @type {Array.<Function>}
      */
-    this.validators = validators;
+    this.validators = Object.assign({}, defaultValidators, validators);
 
     /**
      * Input fields to be validated.
