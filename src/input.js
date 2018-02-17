@@ -62,9 +62,9 @@ class Input {
      * @type {Array.<function>}
      */
     this.validators = {
-      ...validators, // User defined validators
       ...fromValidations(this.type.validations.filter(validation =>
         !userValidations.includes(validation))), // Default validators from input type
+      ...validators, // User defined validators
     };
 
     /**
