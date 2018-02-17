@@ -25,7 +25,7 @@ class Input {
    * @param {Object} options
    * @param {Object} formStyle
    */
-  constructor(options, formStyle) {
+  constructor(form, options) {
     const {
       el,
       type,
@@ -45,6 +45,13 @@ class Input {
      * @type {HTMLInputElement}
      */
     this.$el = el;
+
+    /**
+     * The FormValidator containing this input field.
+     * @member Input#form
+     * @type {FormValidator}
+     */
+    this.form = form;
 
     if (!type) {
       const typeAttr = el.getAttribute('type');
@@ -75,7 +82,7 @@ class Input {
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = Object.assign({}, Input.defaultStyle, formStyle, style);
+    this.style = Object.assign({}, Input.defaultStyle, form.style, style);
 
     /**
      * Callback on input initialization.
@@ -140,7 +147,7 @@ class Input {
   }
 
   checkValidity = () => {
-    const { validators } = this;
+    const { validators, form } = this;
 
     const valids = [];
     const invalids = [];
@@ -156,7 +163,10 @@ class Input {
     });
 
     const isValid = !invalids.length;
-    this.valid = isValid;
+    if (this.valid !== isValid) {
+      this.valid = isValid;
+      form.updateValidity();
+    }
 
     return {
       isValid,
