@@ -37,8 +37,16 @@
               <input type="text" id="surname" class="form-control">
             </div>
             <div class="group-control">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control">
+            </div>
+            <div class="group-control">
+              <label for="birthdate">Birthdate</label>
+              <input type="date" id="birthdate" class="form-control">
+            </div>
+            <div class="group-control">
               <label for="age">Age</label>
-              <input type="number" id="age" class="form-control">
+              <input type="number" id="age" class="form-control" readonly>
             </div>
           </form>
         </div>
@@ -50,19 +58,65 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="../lib/FormValidator.js"></script>
     <script>
-      var FormValidator = FormValidator.Validator;
-      new FormValidator({
+      var Validator = FormValidator.Validator;
+      var InputTypes = FormValidator.InputTypes;
+
+      // For age to be between 18 and 100
+      var minDate = new Date();
+      minDate.setFullYear(minDate.getFullYear() - 101);
+      var maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() - 18);
+
+      new Validator({
         fields: [
           {
             el: document.getElementById('firstname'),
+            validations: [
+              ['LETTERS', { min: 2, max: 20 }],
+              ['NUMBERS', { count: 0 }],
+              ['SPECIAL_CHARACTERS', { count: 0 }],
+            ],
           },
           {
             el: document.getElementById('surname'),
+            validations: [
+              ['LETTERS', { min: 2, max: 20 }],
+              ['NUMBERS', { count: 0 }],
+              ['SPECIAL_CHARACTERS', { count: 0 }],
+            ],
+          },
+          {
+            el: document.getElementById('email'),
+          },
+          {
+            el: document.getElementById('birthdate'),
+            validations: [
+              ['DATE_BETWEEN', { min: minDate, max: maxDate }],
+            ],
+            onChange: (event, value, params) => {
+                const now = new Date();
+                const birthdate = new Date(value);
+
+                if (!Number.isNaN(birthdate.getTime())) {
+                  const birthMonth = birthdate.getMonth();
+                  const nowMonth = now.getMonth();
+
+                  const age = now.getFullYear() - birthdate.getFullYear()
+                    - (birthMonth === nowMonth
+                      ? now.getDate() < birthdate.getDate()
+                      : nowMonth < birthMonth);
+
+                  const $age = document.getElementById('age');
+                  $age.value = age;
+                  $age.dispatchEvent(new Event('input'));
+                }
+            }
           },
           {
             el: document.getElementById('age'),
+            type: InputTypes.POSITIVE_NUMBER,
             validations: [
-              ['VALUE_IN', { min: 18 }],
+              ['VALUE_IN', { min: 18, max: 100 }],
             ],
           },
         ],
