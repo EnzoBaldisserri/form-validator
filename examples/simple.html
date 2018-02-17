@@ -28,29 +28,30 @@
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
           <form action="#">
-            <div class="group-control">
+            <div class="form-group">
               <label for="firstname">First name</label>
               <input type="text" id="firstname" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="surname">Surname</label>
               <input type="text" id="surname" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="email">Email</label>
               <input type="email" id="email" class="form-control">
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="birthdate">Birthdate</label>
               <input type="date" id="birthdate" class="form-control" value="">
               <small class="form-text text-muted">
                 Change the initial value to see the validator initializing the validity classes.
               </small>
             </div>
-            <div class="group-control">
+            <div class="form-group">
               <label for="age">Age</label>
               <input type="number" id="age" class="form-control" readonly>
             </div>
+            <button type="submit" id="send" class="btn btn-primary">Send</button>
           </form>
         </div>
       </div>
@@ -169,6 +170,9 @@
             ],
           },
         ],
+        onValidityChange: function(valid) {
+          document.getElementById('send').disabled = !valid;
+        },
         style: {
           validClass: 'is-valid',
           invalidClass: 'is-invalid',
