@@ -1,35 +1,45 @@
 export default {
   NONE: {},
   EMPTY: {
-    changeProperty: '',
+    changeProperty: 'input',
     validations: ['EMPTY'],
   },
   TEXT: {
-    changeProperty: 'keyup',
-    validations: ['NO_EMPTY'],
+    changeProperty: 'input',
+    validations: ['NOT_EMPTY'],
   },
   EMAIL: {
-    changeProperty: 'keyup',
-    validations: ['NO_EMPTY'],
+    changeProperty: 'input',
+    validations: [
+      'NOT_EMPTY',
+      'EMAIL',
+    ],
   },
   PASSWORD: {
-    changeProperty: 'keyup',
-    validations: ['NO_EMPTY'],
+    changeProperty: 'input',
+    validations: ['NOT_EMPTY'],
   },
   NUMBER: {
-    changeProperty: 'change',
-    validations: ['NO_EMPTY'],
+    changeProperty: 'input',
+    validations: ['NOT_EMPTY'],
+  },
+  POSITIVE_NUMBER: {
+    changeProperty: 'input',
+    validations: [
+      'NOT_EMPTY',
+      ['VALUE_IN', { min: 0 }],
+    ],
   },
   DATE: {
     changeProperty: 'change',
-    validations: ['NO_EMPTY'],
+    validations: ['NOT_EMPTY'],
   },
   TIME: {
     changeProperty: 'change',
-    validations: ['NO_EMPTY'],
+    validations: ['NOT_EMPTY'],
   },
   DATETIME: {
     changeProperty: 'change',
-    validations: ['NO_EMPTY'],
+    validations: ['NOT_EMPTY'],
   },
 };
