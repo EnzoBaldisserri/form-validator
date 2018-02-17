@@ -13,7 +13,6 @@ class Validator {
   };
 
   static defaultStyle = {
-    strict: false,
     validClass: 'valid',
     invalidClass: 'invalid',
   }
@@ -33,7 +32,6 @@ class Validator {
      * General style of the form validator.
      *
      * @member FormValidator#style
-     * @prop {Boolean} strict
      * @prop {String} validClass
      * @prop {String} invalidClass
      */

@@ -12,11 +12,11 @@ class Input {
     type: null,
     onChange: null,
     validators: [],
-    style: {
-      strict: false,
-      validClass: null,
-      invalidClass: null,
-    },
+  }
+
+  static defaultStyle = {
+    validClass: null,
+    invalidClass: null,
   }
 
   /**
@@ -32,7 +32,7 @@ class Input {
       onChange,
       validators,
       style,
-    } = Object.assign({}, Input.defaults, { style: formStyle }, options);
+    } = Object.assign({}, Input.defaults, options);
 
     if (!el || !(el instanceof HTMLInputElement)) {
       throw new Error(`Element ${el} is not an input field`);
@@ -77,11 +77,10 @@ class Input {
     /**
      * Style for the input.
      * @member Input#style
-     * @prop {Boolean} strict
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = style;
+    this.style = Object.assign({}, Input.defaultStyle, formStyle, style);
 
     this.init();
   }
@@ -99,7 +98,7 @@ class Input {
     const {
       validators,
       onChange,
-      style: { strict, validClass, invalidClass },
+      style: { validClass, invalidClass },
     } = this;
 
     const { target } = event;
@@ -125,19 +124,11 @@ class Input {
       target.classList.add(invalidClass);
     }
 
-    const canceled = !isValid && strict;
-    if (canceled) {
-      event.preventDefault();
-      // TODO Make operation cancel work
-    }
-
     if (onChange) {
       onChange(event, value, {
         isValid,
         valids,
         invalids,
-        strict,
-        canceled,
       });
     }
   }
