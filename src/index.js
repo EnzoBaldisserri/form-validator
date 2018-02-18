@@ -73,10 +73,14 @@ class Validator {
     this.init();
   }
 
-  init() {
+  init = () => {
     this.updateValidity();
   }
 
+  /**
+   * Checks if the form should be valid or not.
+   * Updates the `valid` attribute and calls the custom `onValidityChange` function if necessary.
+   */
   updateValidity = () => {
     const {
       fields,
