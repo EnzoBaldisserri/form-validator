@@ -136,7 +136,7 @@
       new Validator({
         fields: [
           {
-            el: document.getElementById('firstname'),
+            $el: document.getElementById('firstname'),
             validations: [
               ['LETTERS', { min: 2, max: 20 }],
               ['NUMBERS', { count: 0 }],
@@ -144,7 +144,7 @@
             ],
           },
           {
-            el: document.getElementById('surname'),
+            $el: document.getElementById('surname'),
             validations: [
               ['LETTERS', { min: 2, max: 20 }],
               ['NUMBERS', { count: 0 }],
@@ -152,10 +152,10 @@
             ],
           },
           {
-            el: document.getElementById('email'),
+            $el: document.getElementById('email'),
           },
           {
-            el: document.getElementById('birthdate'),
+            $el: document.getElementById('birthdate'),
             validations: [
               ['DATE_BETWEEN', birthdateProperties],
             ],
@@ -163,7 +163,7 @@
             onChange: onBirthdateChange,
           },
           {
-            el: document.getElementById('age'),
+            $el: document.getElementById('age'),
             type: InputTypes.POSITIVE_NUMBER,
             validations: [
               ['VALUE_IN', ageProperties],
