@@ -1,3 +1,5 @@
+import { Validations as V } from './validations';
+
 function getDefaultTextAreaValidations($element) {
   const validations = [];
   const {
@@ -6,11 +8,11 @@ function getDefaultTextAreaValidations($element) {
   } = $element;
 
   if (required) {
-    validations.push('NOT_EMPTY');
+    validations.push(V.NOT_EMPTY());
   }
 
   if (maxLength >= 0) {
-    validations.push(['CHARACTERS', { max: maxLength }]);
+    validations.push(V.CHARACTERS({ max: maxLength }));
   }
 
   return validations;
@@ -25,15 +27,15 @@ function getDefaultTextValidations($element) {
   } = $element;
 
   if (required) {
-    validations.push('NOT_EMPTY');
+    validations.push(V.NOT_EMPTY());
   }
 
   if (maxLength >= 0) {
-    validations.push(['CHARACTERS', { max: maxLength }]);
+    validations.push(V.CHARACTERS({ max: maxLength }));
   }
 
   if (pattern) {
-    validations.push(['MATCH', { regex: pattern }]);
+    validations.push(V.MATCH({ regex: pattern }));
   }
 
   return validations;
@@ -48,11 +50,11 @@ function getDefaultNumberValidations($element) {
   } = $element;
 
   if (required) {
-    validations.push('NOT_EMPTY');
+    validations.push(V.NOT_EMPTY());
   }
 
-  if (min !== undefined || max !== undefined) {
-    validations.push(['VALUE_IN', { min, max }]);
+  if (min !== '' || max !== '') {
+    validations.push(V.VALUE_IN({ min, max }));
   }
 
   return validations;
@@ -67,14 +69,14 @@ function getDefaultDateValidations($element) {
   } = $element;
 
   if (required) {
-    validations.push('NOT_EMPTY');
+    validations.push(V.NOT_EMPTY());
   }
 
   if (min || max) {
-    validations.push('DATE_BETWEEN', {
+    validations.push(V.DATE_BETWEEN({
       min: min ? new Date(min) : undefined,
       max: max ? new Date(max) : undefined,
-    });
+    }));
   }
 
   return validations;
@@ -96,13 +98,13 @@ export default {
   EMAIL: {
     changeProperty: 'input',
     defaultValidations: $el => ([
-      'EMAIL',
+      V.EMAIL(),
       ...getDefaultTextValidations($el),
     ]),
   },
   EMPTY: {
     changeProperty: 'input',
-    defaultValidations: () => (['EMPTY']),
+    defaultValidations: () => ([V.EMPTY()]),
   },
   FILE: {
     changePrperty: 'input',
@@ -120,7 +122,7 @@ export default {
   POSITIVE_NUMBER: {
     changeProperty: 'input',
     defaultValidations: $el => ([
-      ['VALUE_IN', { min: 0 }],
+      V.VALUE_IN({ min: 0 }),
       ...getDefaultNumberValidations($el),
     ]),
   },
