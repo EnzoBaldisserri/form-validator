@@ -1,4 +1,4 @@
-import { defaultValidators, fromValidations } from './validators';
+import { Validations, addValidations } from './validations';
 import Input from './input';
 import InputTypes from './inputTypes';
 
@@ -7,9 +7,13 @@ import InputTypes from './inputTypes';
  * @class
  */
 class Validator {
-  static defaultStyle = {
-    validClass: 'valid',
-    invalidClass: 'invalid',
+  static defaults = {
+    fields: [],
+    style: {
+      validClass: 'valid',
+      invalidClass: 'valid',
+    },
+    onValidityChange: null,
   }
 
   /**
@@ -19,10 +23,9 @@ class Validator {
   constructor(options) {
     const {
       fields,
-      validators,
       style,
       onValidityChange,
-    } = options;
+    } = Object.assign({}, Validator.defaults, options);
 
     if (!fields) {
       throw new Error('No fields defined');
@@ -35,24 +38,18 @@ class Validator {
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = Object.assign({}, Validator.defaultStyle, style);
+    this.style = style;
 
     /**
-     * Custom validators for the validator.
-     * @member Validator#validators
-     * @type {Array.<Function>}
      */
-    this.validators = Object.assign({}, defaultValidators, validators);
 
     /**
      * Input fields to be validated.
+     *
      * @member Validator#fields
      * @type {Array.<Input>}
      */
-    this.fields = fields.map(field => new Input(
-      this,
-      Object.assign(field, { validators: fromValidations(field.validations, this.validators) }),
-    ));
+    this.fields = this.initFields(fields);
 
     /**
      * Function called when validity of the form changes.
@@ -73,7 +70,15 @@ class Validator {
     this.init();
   }
 
+  initFields = fields =>
+    fields.map(field => new Input(
+      this,
+      field,
+    ));
+
   init = () => {
+    this.fields.forEach(input => input.init());
+
     this.updateValidity();
   }
 
@@ -101,5 +106,7 @@ class Validator {
 
 export {
   Validator,
+  Validations,
+  addValidations,
   InputTypes,
 };

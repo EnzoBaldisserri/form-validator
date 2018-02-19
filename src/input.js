@@ -1,5 +1,4 @@
 import InputTypes from './inputTypes';
-import { fromValidations } from './validators';
 
 /**
  * Representation of an HTML input element,
@@ -10,14 +9,10 @@ class Input {
   static defaults = {
     $el: null,
     type: null,
-    validators: [],
+    validations: [],
+    style: {},
     onInit: null,
     onChange: null,
-  }
-
-  static defaultStyle = {
-    validClass: null,
-    invalidClass: null,
   }
 
   /**
@@ -30,7 +25,7 @@ class Input {
     const {
       $el,
       type,
-      validators,
+      validations,
       style,
       onInit,
       onChange,
@@ -62,21 +57,16 @@ class Input {
      * @member Input#member
      * @type {InputType}
      */
-    this.type = Input.initType(type, $el);
+    this.type = this.initType(type);
 
-    const userValidations = Object.keys(validators);
-    const defaultValidations = this.type.defaultValidations($el)
-      .filter(validation => !userValidations.includes(validation));
+    const defaultValidations = this.type.defaultValidations($el);
 
     /**
-     * Validators for the input.
-     * @member Input#validators
+     * Validations for the input.
+     * @member Input#validations
      * @type {Array.<function>}
      */
-    this.validators = {
-      ...fromValidations(defaultValidations),
-      ...validators,
-    };
+    this.validations = Object.assign(defaultValidations, validations);
 
     /**
      * Style for the input.
@@ -84,7 +74,7 @@ class Input {
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = Object.assign({}, Input.defaultStyle, form.style, style);
+    this.style = Object.assign({}, form.style, style);
 
     /**
      * Callback on input initialization.
@@ -111,8 +101,6 @@ class Input {
      * @type {Boolean}
      */
     this.valid = false;
-
-    this.init();
   }
 
   /**
@@ -134,7 +122,7 @@ class Input {
       onInit,
     } = this;
 
-    const properties = this.checkValidity();
+    const properties = this.updateValidity();
 
     if ((onInit && !onInit === false && onInit($el.value, properties) !== false) || $el.value) {
       this.applyClasses();
@@ -152,7 +140,7 @@ class Input {
       onChange,
     } = this;
 
-    const properties = this.checkValidity();
+    const properties = this.updateValidity();
 
     if (onChange) {
       if (onChange(event, $el.value, properties) !== false) {
@@ -172,19 +160,19 @@ class Input {
    *
    * @return {Object} The properties of validity.
    */
-  checkValidity = () => {
-    const { validators, form } = this;
+  updateValidity = () => {
+    const { validations, form } = this;
 
     const valids = [];
     const invalids = [];
 
     const { value } = this.$el;
 
-    Object.entries(validators).forEach(([name, validator]) => {
-      if (validator(value)) {
-        valids.push(name);
+    validations.forEach(({ validate, repr }) => {
+      if (validate(value)) {
+        valids.push(repr);
       } else {
-        invalids.push(name);
+        invalids.push(repr);
       }
     });
 
@@ -240,7 +228,9 @@ class Input {
    * @param  {HTMLElement} $el The input element to which will be applied the type
    * @return {InputType} The definitive type
    */
-  static initType(type, $el) {
+  initType(type) {
+    const { $el } = this;
+
     if (!type) {
       const typeAttr = $el.getAttribute('type');
       return typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
