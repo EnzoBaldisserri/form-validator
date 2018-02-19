@@ -65,8 +65,8 @@ class Input {
     this.type = Input.initType(type, $el);
 
     const userValidations = Object.keys(validators);
-    const typeDefaultValidations = this.type.validations.filter(validation =>
-      !userValidations.includes(validation));
+    const defaultValidations = this.type.defaultValidations($el)
+      .filter(validation => !userValidations.includes(validation));
 
     /**
      * Validators for the input.
@@ -74,7 +74,7 @@ class Input {
      * @type {Array.<function>}
      */
     this.validators = {
-      ...fromValidations(typeDefaultValidations),
+      ...fromValidations(defaultValidations),
       ...validators,
     };
 
@@ -255,24 +255,17 @@ class Input {
    * @return {Object}
    */
   static attrToType(type) {
-    switch (type.toLowerCase()) {
-      case 'text':
-        return InputTypes.TEXT;
-      case 'email':
-        return InputTypes.EMAIL;
-      case 'password':
-        return InputTypes.PASSWORD;
-      case 'number':
-        return InputTypes.NUMBER;
-      case 'date':
-        return InputTypes.DATE;
-      case 'time':
-        return InputTypes.TIME;
-      case 'datetime-local':
-        return InputTypes.DATETIME;
-      default:
-        return InputTypes.NONE;
+    const upperType = type.toUpperCase();
+
+    if (upperType === 'DATETIME-LOCAL') {
+      return InputTypes.DATETIME;
     }
+
+    const inputType = InputTypes[upperType];
+    if (!inputType) {
+      return InputTypes.NONE;
+    }
+    return inputType;
   }
 }
 

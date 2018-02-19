@@ -1,21 +1,12 @@
-const regExps = {
-  email: /\S+@\S+\.\S+/,
-  specialCharacters: /[^A-Za-z0-9]/,
-  letter: /[A-Za-z]/,
-  lowercaseLetter: /[a-z]/,
-  uppercaseLetter: /[A-Z]/,
-  number: /\d/,
-};
-
-function regExpMatchCounter(input, regExp) {
-  const globalRegExp = new RegExp(regExp, 'g');
-  const matches = input.match(globalRegExp);
+function regexMatchCounter(input, regex) {
+  const globalRegex = new RegExp(regex, 'g');
+  const matches = input.match(globalRegex);
 
   return matches === null ? 0 : matches.length;
 }
 
-function defaultRegExpValidator(input, params, regExp) {
-  const matchCount = regExpMatchCounter(input, regExp);
+function defaultRegexValidator(input, params, regex) {
+  const matchCount = regexMatchCounter(input, regex);
   const { count, min, max } = params;
 
   if (count !== undefined) {
@@ -25,26 +16,27 @@ function defaultRegExpValidator(input, params, regExp) {
 }
 
 const defaultValidators = {
-  EMPTY: value => !value.length,
-  NOT_EMPTY: value => value.length,
-  EMAIL: value => regExps.email.test(value),
-  VALUE_IN: ({ min, max }) => value =>
-    (min === undefined || +value >= min) && (max === undefined || +value <= max),
-  DATE_BETWEEN: ({ min, max }) => (value) => {
-    const date = new Date(value);
-    return (min === undefined || min < date) && (max === undefined || date < max);
-  },
   CHARACTERS: ({ count, min, max }) => value => (
     count
       ? value.length === count
       : (min === undefined || value.length >= min) && (max === undefined || value.length <= max)
   ),
+  DATE_BETWEEN: ({ min, max }) => (value) => {
+    const date = new Date(value);
+    return (min === undefined || min < date) && (max === undefined || date < max);
+  },
+  EMAIL: value => /\S+@\S+\.\S+/.test(value),
+  EMPTY: value => !value.length,
+  LETTERS: params => value => defaultRegexValidator(value, params, /[A-Za-z]/),
+  LOWERCASES: params => value => defaultRegexValidator(value, params, /[a-z]/),
+  MATCH: ({ regex }) => value => new RegExp(regex, '').test(value),
+  NOT_EMPTY: value => !!value.length,
+  NUMBERS: params => value => defaultRegexValidator(value, params, /\d/),
   SPECIAL_CHARACTERS: params => value =>
-    defaultRegExpValidator(value, params, regExps.specialCharacters),
-  LETTERS: params => value => defaultRegExpValidator(value, params, regExps.letter),
-  UPPERCASES: params => value => defaultRegExpValidator(value, params, regExps.uppercaseLetter),
-  LOWERCASES: params => value => defaultRegExpValidator(value, params, regExps.lowercaseLetter),
-  NUMBERS: params => value => defaultRegExpValidator(value, params, regExps.number),
+    defaultRegexValidator(value, params, /[^A-Za-z0-9]/),
+  UPPERCASES: params => value => defaultRegexValidator(value, params, /[A-Z]/),
+  VALUE_IN: ({ min, max }) => value =>
+    (min === undefined || +value >= min) && (max === undefined || +value <= max),
 };
 
 const fromValidations = (validations = [], validators = defaultValidators) =>
