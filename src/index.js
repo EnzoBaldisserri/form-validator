@@ -1,5 +1,6 @@
 import { Validations, addValidations } from './validations';
 import Input from './input';
+import Form from './form';
 import InputTypes from './inputTypes';
 
 /**
@@ -8,6 +9,7 @@ import InputTypes from './inputTypes';
  */
 class Validator {
   static defaults = {
+    forms: [],
     fields: [],
     style: {
       validClass: 'valid',
@@ -22,6 +24,7 @@ class Validator {
    */
   constructor(options) {
     const {
+      forms,
       fields,
       style,
       onValidityChange,
@@ -41,7 +44,9 @@ class Validator {
     this.style = style;
 
     /**
+     *
      */
+    this.forms = this.initForms(forms);
 
     /**
      * Input fields to be validated.
@@ -70,21 +75,45 @@ class Validator {
     this.init();
   }
 
-  initFields = fields =>
-    fields.map(field => new Input(
+  initForms = (forms) => {
+    // If there's one unique form
+    if (!Array.isArray(forms)) {
+      return [
+        new Form(this, forms),
+      ];
+    }
+
+    return forms.map(form => new Form(
+      this,
+      form,
+    ));
+  }
+
+  initFields = (fields) => {
+    if (!Array.isArray(fields)) {
+      return [
+        new Input(this, fields),
+      ];
+    }
+
+    return fields.map(field => new Input(
       this,
       field,
     ));
+  }
 
   init = () => {
-    this.fields.forEach(input => input.init());
+    const { forms, fields } = this;
+
+    forms.forEach(form => form.init());
+    fields.forEach(input => input.init());
 
     this.updateValidity();
   }
 
   /**
-   * Checks if the form should be valid or not.
-   * Updates the `valid` attribute and calls the custom `onValidityChange` function if necessary.
+   * Checks if the fields which are not in a form are valid.
+   * If necessary, updates the `valid` attribute and calls the custom `onValidityChange` function.
    */
   updateValidity = () => {
     const {
@@ -92,8 +121,8 @@ class Validator {
       onValidityChange,
     } = this;
 
-    const valid = fields.reduce((formValid, field) =>
-      formValid && field.valid, true);
+    const valid = fields.reduce((fieldsValid, field) =>
+      fieldsValid && field.valid, true);
 
     if (this.valid !== valid) {
       this.valid = valid;
