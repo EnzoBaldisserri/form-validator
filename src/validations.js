@@ -27,6 +27,19 @@ class Validation {
 }
 
 const Validations = {
+  new: (name, validate) => {
+    const newValidation = {
+      [name]: (params, repr) => new Validation(
+        repr || name,
+        validate(params),
+      ),
+    };
+
+    Object.assign(
+      Validations,
+      newValidation,
+    );
+  },
   CHARACTERS: ({ count, min, max }, repr) => new Validation(
     repr || 'CHARACTERS',
     value => (
