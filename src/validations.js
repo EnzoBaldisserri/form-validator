@@ -30,7 +30,7 @@ const Validations = {
   CHARACTERS: ({ count, min, max }, repr) => new Validation(
     repr || 'CHARACTERS',
     value => (
-      count
+      count !== undefined
         ? value.length === count
         : (min === undefined || value.length >= min) && (max === undefined || value.length <= max)
     ),
