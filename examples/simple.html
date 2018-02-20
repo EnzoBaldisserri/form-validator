@@ -27,29 +27,29 @@
       <div class="row">
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
-          <form action="#">
+          <form name="simple-form" action="#" method="post">
             <div class="form-group">
               <label for="firstname">First name</label>
               <!-- Having an input with 'required' attribute automatically sets NOT_EMPTY validation -->
-              <input type="text" id="firstname" class="form-control" required>
+              <input type="text" name="firstname" autocomplete="given-name" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="surname">Surname</label>
-              <input type="text" id="surname" class="form-control" required>
+              <input type="text" name="surname" autocomplete="family-name" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" class="form-control" required>
+              <input type="email" name="email" autocomplete="email" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="birthday">Birthday</label>
-              <input type="date" id="birthday" class="form-control" required>
+              <input type="date" name="birthday" autocomplete="bday" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="age">Age</label>
-              <input type="number" id="age" class="form-control" readonly required>
+              <input type="number" name="age" class="form-control" readonly required>
             </div>
-            <button type="submit" id="send" class="btn btn-primary">Send</button>
+            <button type="submit" class="btn btn-primary">Send</button>
           </form>
         </div>
       </div>
@@ -107,73 +107,59 @@
 
       // Initialization of the form validator
       new Validator({
-        fields: [
-          {
-            $el: document.getElementById('firstname'),
-            validations: [
-              V.LETTERS({ min: 2, max: 20 }),
-              V.NUMBERS({ count: 0 }),
-              V.SPECIAL_CHARACTERS({ count: 0 }),
-            ],
-          },
-          {
-            $el: document.getElementById('surname'),
-            validations: [
-              V.LETTERS({ min: 2, max: 20 }),
-              V.NUMBERS({ count: 0 }),
-              V.SPECIAL_CHARACTERS({ count: 0 }),
-            ],
-          },
-          {
-            $el: document.getElementById('email'),
-          },
-          {
-            $el: document.getElementById('birthday'),
-            validations: [
-              V.DATE_BETWEEN(bdayProperties),
-            ],
-            onInit: function(value, properties) {
-              if (value && properties.isValid) {
+        forms: {
+          name: 'simple-form',
+          fields: [
+            {
+              name: 'firstname',
+              validations: [
+                V.LETTERS({ min: 2, max: 20 }),
+                V.NUMBERS({ count: 0 }),
+                V.SPECIAL_CHARACTERS({ count: 0 }),
+              ],
+            },
+            {
+              name: 'surname',
+              validations: [
+                V.LETTERS({ min: 2, max: 20 }),
+                V.NUMBERS({ count: 0 }),
+                V.SPECIAL_CHARACTERS({ count: 0 }),
+              ],
+            },
+            {
+              name: 'email',
+            },
+            {
+              name: 'birthday',
+              validations: [
+                V.DATE_BETWEEN(bdayProperties),
+              ],
+              onChange: function(event, value, properties) {
                 var birthday = new Date(value);
                 var age = computeAge(birthday);
 
-                if (age !== false) {
-                  var $age = document.getElementById('age');
-                  $age.value = age;
-                  $age.dispatchEvent(new Event('input'));
-
-                  return true;
+                if (age === false) {
+                  return false;
                 }
-              }
-              return false;
+
+                var $age = document.forms['simple-form'].elements['age'];
+                $age.value = age;
+                $age.dispatchEvent(new Event('input'));
+              },
             },
-            onChange: function(event, value, properties) {
-              var birthday = new Date(value);
-              var age = computeAge(birthday);
-
-              if (age === false) {
-                return false;
-              }
-
-              var $age = document.getElementById('age');
-              $age.value = age;
-              $age.dispatchEvent(new Event('input'));
-            }
-          },
-          {
-            $el: document.getElementById('age'),
-            type: InputTypes.POSITIVE_NUMBER,
-            validations: [
-              V.VALUE_IN(ageProperties),
-            ],
-            onChange: (event, value) => {
-              // Return false when the value is empty so input isn't marked as invalid
-              return !!value.length;
-            }
-          },
-        ],
-        onValidityChange: function(valid) {
-          document.getElementById('send').disabled = !valid;
+            {
+              name: 'age',
+              type: InputTypes.POSITIVE_NUMBER,
+              validations: [
+                V.VALUE_IN(ageProperties),
+              ],
+              onChange: (event, value) => {
+                // Return false when the value is empty so input isn't marked as invalid
+                return !!value.length;
+              },
+            },
+          ],
+          submit: true,
         },
         style: {
           validClass: 'is-valid',

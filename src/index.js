@@ -1,5 +1,6 @@
-import { Validations, addValidations } from './validations';
+import { Validations } from './validations';
 import Input from './input';
+import Form from './form';
 import InputTypes from './inputTypes';
 
 /**
@@ -8,12 +9,12 @@ import InputTypes from './inputTypes';
  */
 class Validator {
   static defaults = {
+    forms: [],
     fields: [],
     style: {
       validClass: 'valid',
       invalidClass: 'valid',
     },
-    onValidityChange: null,
   }
 
   /**
@@ -22,17 +23,17 @@ class Validator {
    */
   constructor(options) {
     const {
+      forms,
       fields,
       style,
-      onValidityChange,
     } = Object.assign({}, Validator.defaults, options);
 
-    if (!fields) {
-      throw new Error('No fields defined');
+    if (!forms && !fields) {
+      throw new Error('No forms nor fields defined');
     }
 
     /**
-     * General style of the form validator.
+     * General style for the children of the form validator.
      *
      * @member Validator#style
      * @prop {String} validClass
@@ -41,72 +42,62 @@ class Validator {
     this.style = style;
 
     /**
+     * Forms controlled by the validator.
+     *
+     * @member Validator#forms
+     * @type {Array.<Form>}
      */
+    this.forms = this.initForms(forms);
 
     /**
-     * Input fields to be validated.
+     * Input fields controlled by the validator.
      *
      * @member Validator#fields
      * @type {Array.<Input>}
      */
     this.fields = this.initFields(fields);
 
-    /**
-     * Function called when validity of the form changes.
-     *
-     * @member Validator#onValidityChange
-     * @type {Function}
-     */
-    this.onValidityChange = onValidityChange;
-
-    /**
-     * Correspond to the validity of the form.
-     *
-     * @member Validator#valid
-     * @type {Boolean}
-     */
-    this.valid = null;
-
     this.init();
   }
 
-  initFields = fields =>
-    fields.map(field => new Input(
+  initForms = (forms) => {
+    // If there's one unique form
+    if (!Array.isArray(forms)) {
+      return [
+        new Form(this, forms),
+      ];
+    }
+
+    return forms.map(form => new Form(
+      this,
+      form,
+    ));
+  }
+
+  initFields = (fields) => {
+    // If there's one unique field
+    if (!Array.isArray(fields)) {
+      return [
+        new Input(this, fields),
+      ];
+    }
+
+    return fields.map(field => new Input(
       this,
       field,
     ));
-
-  init = () => {
-    this.fields.forEach(input => input.init());
-
-    this.updateValidity();
   }
 
-  /**
-   * Checks if the form should be valid or not.
-   * Updates the `valid` attribute and calls the custom `onValidityChange` function if necessary.
-   */
-  updateValidity = () => {
-    const {
-      fields,
-      onValidityChange,
-    } = this;
+  init = () => {
+    const { forms, fields } = this;
 
-    const valid = fields.reduce((formValid, field) =>
-      formValid && field.valid, true);
-
-    if (this.valid !== valid) {
-      this.valid = valid;
-      if (onValidityChange) {
-        onValidityChange(valid);
-      }
-    }
+    forms.forEach(form => form.init());
+    fields.forEach(input => input.init());
   }
 }
 
 export {
   Validator,
   Validations,
-  addValidations,
   InputTypes,
 };

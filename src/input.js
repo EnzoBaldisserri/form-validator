@@ -1,13 +1,13 @@
 import InputTypes from './inputTypes';
 
 /**
- * Representation of an HTML input element,
- * validated by the validator.
+ * Representation of a controlled input element.
  * @class
  */
 class Input {
   static defaults = {
     $el: null,
+    name: null,
     type: null,
     validations: [],
     style: {},
@@ -18,12 +18,13 @@ class Input {
   /**
    * Creates an Input instance.
    *
+   * @param {FormValidator|Form} parent
    * @param {Object} options
-   * @param {Object} formStyle
    */
-  constructor(form, options) {
+  constructor(parent, options) {
     const {
       $el,
+      name,
       type,
       validations,
       style,
@@ -31,25 +32,27 @@ class Input {
       onChange,
     } = Object.assign({}, Input.defaults, options);
 
-    if (!$el || !($el instanceof HTMLInputElement)) {
-      throw new Error(`${$el} is not an input field`);
+    const $input = $el || parent.$form?.elements[name];
+
+    if (!$input || !($input instanceof HTMLInputElement)) {
+      throw new Error(`${typeof $input} '${$input}' is not an input field`);
     }
 
     /**
      * The HTML <input> element.
      *
-     * @member Input#$el
+     * @member Input#$input
      * @type {HTMLInputElement}
      */
-    this.$el = $el;
+    this.$input = $input;
 
     /**
-     * The FormValidator containing this input field.
+     * The form containing this input field.
      *
-     * @member Input#form
-     * @type {FormValidator}
+     * @member Input#parent
+     * @type {FormValidator|Form}
      */
-    this.form = form;
+    this.parent = parent;
 
     /**
      * The type of the input field.
@@ -59,22 +62,24 @@ class Input {
      */
     this.type = this.initType(type);
 
-    const defaultValidations = this.type.defaultValidations($el);
+    const defaultValidations = this.type.defaultValidations($input);
 
     /**
      * Validations for the input.
+     *
      * @member Input#validations
      * @type {Array.<function>}
      */
     this.validations = Object.assign(defaultValidations, validations);
 
     /**
-     * Style for the input.
+     * Specific style for the input.
+     *
      * @member Input#style
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
-    this.style = Object.assign({}, form.style, style);
+    this.style = Object.assign({}, parent.style, style);
 
     /**
      * Callback on input initialization.
@@ -110,21 +115,18 @@ class Input {
    * and calls the `onInit` custom function.
    */
   init = () => {
+    const { $input, onInit } = this;
     const { changeProperty } = this.type;
 
     if (changeProperty) {
-      this.$el.addEventListener(changeProperty, this.handleChange);
-      this.$el.addEventListener('blur', this.handleChange);
+      $input.addEventListener(changeProperty, this.handleChange);
+      $input.addEventListener('blur', this.handleChange);
     }
-
-    const {
-      $el,
-      onInit,
-    } = this;
 
     const properties = this.updateValidity();
 
-    if ((onInit && !onInit === false && onInit($el.value, properties) !== false) || $el.value) {
+    if ((onInit && onInit !== false && onInit($input.value, properties) !== false)
+      || $input.value) {
       this.applyClasses();
     }
   }
@@ -136,19 +138,19 @@ class Input {
    */
   handleChange = (event) => {
     const {
-      $el,
+      $input,
       onChange,
     } = this;
 
     const properties = this.updateValidity();
 
     if (onChange) {
-      if (onChange(event, $el.value, properties) !== false) {
+      if (onChange(event, $input.value, properties) !== false) {
         this.applyClasses();
       } else {
         this.removeClasses();
       }
-    } else {
+    } else if (onChange !== false) {
       this.applyClasses();
     }
   }
@@ -161,12 +163,12 @@ class Input {
    * @return {Object} The properties of validity.
    */
   updateValidity = () => {
-    const { validations, form } = this;
+    const { parent, $input, validations } = this;
 
     const valids = [];
     const invalids = [];
 
-    const { value } = this.$el;
+    const { value } = $input;
 
     validations.forEach(({ validate, repr }) => {
       if (validate(value)) {
@@ -179,7 +181,7 @@ class Input {
     const isValid = !invalids.length;
     if (this.valid !== isValid) {
       this.valid = isValid;
-      form.updateValidity();
+      parent.updateValidity?.();
     }
 
     return {
@@ -194,17 +196,17 @@ class Input {
    */
   applyClasses = () => {
     const {
-      $el,
+      $input,
       valid,
       style: { validClass, invalidClass },
     } = this;
 
     if (valid) {
-      $el.classList.remove(invalidClass);
-      $el.classList.add(validClass);
+      $input.classList.remove(invalidClass);
+      $input.classList.add(validClass);
     } else {
-      $el.classList.remove(validClass);
-      $el.classList.add(invalidClass);
+      $input.classList.remove(validClass);
+      $input.classList.add(invalidClass);
     }
   }
 
@@ -213,26 +215,25 @@ class Input {
    */
   removeClasses = () => {
     const {
-      $el,
+      $input,
       style: { validClass, invalidClass },
     } = this;
 
-    $el.classList.remove(validClass);
-    $el.classList.remove(invalidClass);
+    $input.classList.remove(validClass);
+    $input.classList.remove(invalidClass);
   }
 
   /**
    * Computes the type of an Input.
    *
-   * @param  {InputType|String} type The property provided by the user
-   * @param  {HTMLElement} $el The input element to which will be applied the type
+   * @param  {InputType} type The property provided by the user
    * @return {InputType} The definitive type
    */
   initType(type) {
-    const { $el } = this;
+    const { $input } = this;
 
     if (!type) {
-      const typeAttr = $el.getAttribute('type');
+      const typeAttr = $input.getAttribute('type');
       return typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
     }
     return type;
@@ -255,6 +256,7 @@ class Input {
     if (!inputType) {
       return InputTypes.NONE;
     }
+
     return inputType;
   }
 }
