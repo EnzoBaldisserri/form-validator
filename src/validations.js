@@ -12,7 +12,7 @@ function defaultRegexCountValidation(input, params, regex) {
   if (count !== undefined) {
     return matchCount === count;
   }
-  return (min === undefined || matchCount >= min) && (max === undefined || matchCount <= max);
+  return (min === undefined || min <= matchCount) && (max === undefined || matchCount <= max);
 }
 
 class Validation {
@@ -27,13 +27,20 @@ class Validation {
 }
 
 const Validations = {
-  new: (name, validate) => {
-    const newValidation = {
-      [name]: (params, repr) => new Validation(
-        repr || name,
-        validate(params),
-      ),
-    };
+  new: (name, validate, hasParam = true) => {
+    const newValidation = hasParam
+      ? {
+        [name]: (params, repr) => new Validation(
+          repr || name,
+          validate(params),
+        ),
+      }
+      : {
+        [name]: repr => new Validation(
+          repr || name,
+          validate,
+        ),
+      };
 
     Object.assign(
       Validations,
