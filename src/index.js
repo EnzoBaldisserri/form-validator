@@ -64,28 +64,22 @@ class Validator {
     // If there's one unique form
     if (!Array.isArray(forms)) {
       return [
-        new Form(this, forms),
+        Form.initForm(this, forms),
       ];
     }
 
-    return forms.map(form => new Form(
-      this,
-      form,
-    ));
+    return forms.map(form => Form.initForm(this, form));
   }
 
   initFields = (fields) => {
     // If there's one unique field
     if (!Array.isArray(fields)) {
       return [
-        new Input(this, fields),
+        FormField.initFormField(this, fields),
       ];
     }
 
-    return fields.map(field => new Input(
-      this,
-      field,
-    ));
+    return fields.map(field => FormField.initFormField(this, field));
   }
 
   init = () => {

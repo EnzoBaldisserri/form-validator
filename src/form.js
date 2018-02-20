@@ -118,11 +118,16 @@ class Form {
     return null;
   }
 
-  initFields = fields =>
-    fields.map(field => new Input(
-      this,
-      field,
-    ));
+  initFields = (fields) => {
+    // If there's one unique field
+    if (!Array.isArray(fields)) {
+      return [
+        FormField.initFormField(this, fields),
+      ];
+    }
+
+    return fields.map(field => FormField.initFormField(this, field));
+  }
 
   init = () => {
     const { fields } = this;
@@ -149,6 +154,18 @@ class Form {
         this.onValidityChange(valid);
       }
     }
+  }
+
+  static initForm = (parent, formProps) => {
+    if (typeof formProps === 'string' || typeof form === 'number') {
+      return new Form(parent, { name: formProps });
+    }
+
+    if (formProps instanceof HTMLElement) {
+      return new Form(parent, { $el: formProps });
+    }
+
+    return new Form(parent, formProps);
   }
 }
 
