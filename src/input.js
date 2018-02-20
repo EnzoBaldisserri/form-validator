@@ -34,7 +34,7 @@ class Input {
 
     const $input = $el || parent.$form?.elements[name];
 
-    if (!$input || !($input instanceof HTMLInputElement)) {
+    if (!$input || !($input instanceof HTMLInputElement || $input instanceof HTMLTextAreaElement)) {
       throw new Error(`${typeof $input} '${$input}' is not an input field`);
     }
 
@@ -106,6 +106,27 @@ class Input {
      * @type {Boolean}
      */
     this.valid = false;
+  }
+
+  /**
+   * Computes the type of an Input.
+   *
+   * @param  {InputType} type The property provided by the user
+   * @return {InputType} The definitive type
+   */
+  initType(type) {
+    if (!type) {
+      const { $input } = this;
+
+      if ($input instanceof HTMLTextAreaElement) {
+        return InputTypes.TEXTAREA;
+      }
+
+      const typeAttr = $input.getAttribute('type');
+      return typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
+    }
+
+    return type;
   }
 
   /**
@@ -221,22 +242,6 @@ class Input {
 
     $input.classList.remove(validClass);
     $input.classList.remove(invalidClass);
-  }
-
-  /**
-   * Computes the type of an Input.
-   *
-   * @param  {InputType} type The property provided by the user
-   * @return {InputType} The definitive type
-   */
-  initType(type) {
-    const { $input } = this;
-
-    if (!type) {
-      const typeAttr = $input.getAttribute('type');
-      return typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
-    }
-    return type;
   }
 
   /**
