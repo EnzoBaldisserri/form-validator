@@ -118,11 +118,22 @@ class Form {
     return null;
   }
 
-  initFields = fields =>
-    fields.map(field => new Input(
-      this,
-      field,
-    ));
+  initFields = (fields) => {
+    // If fields isn't defined, get all fields of the form
+    const controlled = fields.length
+      ? fields
+      : Array.of(...this.$form.elements).filter(el =>
+        el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement);
+
+    // If there's one unique field
+    if (!Array.isArray(controlled)) {
+      return [
+        FormField.initFormField(this, controlled),
+      ];
+    }
+
+    return controlled.map(field => FormField.initFormField(this, field));
+  }
 
   init = () => {
     const { fields } = this;
@@ -149,6 +160,18 @@ class Form {
         this.onValidityChange(valid);
       }
     }
+  }
+
+  static initForm = (parent, formProps) => {
+    if (typeof formProps === 'string' || typeof form === 'number') {
+      return new Form(parent, { name: formProps });
+    }
+
+    if (formProps instanceof HTMLElement) {
+      return new Form(parent, { $el: formProps });
+    }
+
+    return new Form(parent, formProps);
   }
 }
 

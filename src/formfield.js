@@ -264,6 +264,18 @@ class FormField {
 
     return inputType;
   }
+
+  static initFormField = (parent, field) => {
+    if (typeof field === 'string') {
+      return new FormField(parent, { name: field });
+    }
+
+    if (field instanceof HTMLElement) {
+      return new FormField(parent, { $el: field });
+    }
+
+    return new FormField(parent, field);
+  }
 }
 
 export default FormField;
