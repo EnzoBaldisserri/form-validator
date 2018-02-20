@@ -29,7 +29,7 @@ class Validator {
     } = Object.assign({}, Validator.defaults, options);
 
     if (!forms && !fields) {
-      throw new Error('No forms nor fields defined');
+      throw new Error('Invalid paramters: No forms nor fields defined');
     }
 
     /**

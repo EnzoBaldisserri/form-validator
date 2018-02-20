@@ -18,7 +18,7 @@ function defaultRegexCountValidation(input, params, regex) {
 class Validation {
   constructor(repr, validate) {
     if (typeof validate !== 'function') {
-      throw new Error(`${typeof validate} '${validate}' isn't a function`);
+      throw new Error('Invalid argument: \'validate\' must be a function');
     }
 
     this.repr = repr;
@@ -28,6 +28,10 @@ class Validation {
 
 const Validations = {
   new: (name, validate, hasParam = true) => {
+    if (name === 'new') {
+      throw new Error('Invalid argument: name can\'t be \'new\'');
+    }
+
     const newValidation = hasParam
       ? {
         [name]: (params, repr) => new Validation(

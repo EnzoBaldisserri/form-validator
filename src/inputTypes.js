@@ -83,7 +83,7 @@ function getDefaultDateValidations($element) {
 }
 
 function getDefaultFileValidations() {
-  throw new Error('File input currently aren\'t handled by the library');
+  throw new Error('Invalid type: File inputs aren\'t handled by the library');
 }
 
 export default {

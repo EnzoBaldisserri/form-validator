@@ -32,7 +32,7 @@ class Form {
 
     const $form = $el || document.forms[name];
     if (!$form || !($form instanceof HTMLFormElement)) {
-      throw new Error(`${typeof $form} '${$form}' is not an HTMLFormElement`);
+      throw new Error('Parameter error: $el must be an HTMLFormElement');
     }
 
     /**
@@ -105,11 +105,11 @@ class Form {
 
     if (submit instanceof HTMLButtonElement || submit instanceof HTMLInputElement) {
       if (submit.type !== 'submit') {
-        throw new Error(`Button or input ${submit} isn't of type 'submit'`);
+        throw new Error('Parameter error: Submit button or input must be of type \'submit\'');
       }
 
       if (submit.form !== this.$form) {
-        throw new Error(`Submit button or input ${submit} isn't part of the form it's associated to.`);
+        throw new Error('Parameter error: Submit button or input must be part of the form it\'s associated to');
       }
 
       return submit;

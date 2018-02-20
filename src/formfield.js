@@ -35,7 +35,7 @@ class FormField {
     const $input = $el || parent.$form?.elements[name];
 
     if (!$input || !($input instanceof HTMLInputElement || $input instanceof HTMLTextAreaElement)) {
-      throw new Error(`${typeof $input} '${$input}' is not an input field`);
+      throw new Error('Parameter error: $el must be an input field or a textarea');
     }
 
     /**
