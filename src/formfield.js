@@ -4,7 +4,7 @@ import InputTypes from './inputTypes';
  * Representation of a controlled input element.
  * @class
  */
-class Input {
+class FormField {
   static defaults = {
     $el: null,
     name: null,
@@ -16,7 +16,7 @@ class Input {
   }
 
   /**
-   * Creates an Input instance.
+   * Creates a FormField instance.
    *
    * @param {FormValidator|Form} parent
    * @param {Object} options
@@ -30,7 +30,7 @@ class Input {
       style,
       onInit,
       onChange,
-    } = Object.assign({}, Input.defaults, options);
+    } = Object.assign({}, FormField.defaults, options);
 
     const $input = $el || parent.$form?.elements[name];
 
@@ -39,17 +39,17 @@ class Input {
     }
 
     /**
-     * The HTML <input> element.
+     * The HTML <input> or <textarea> element.
      *
-     * @member Input#$input
-     * @type {HTMLInputElement}
+     * @member FormField#$input
+     * @type {HTMLInputElement|HTMLTextareaElement}
      */
     this.$input = $input;
 
     /**
      * The form containing this input field.
      *
-     * @member Input#parent
+     * @member FormField#parent
      * @type {FormValidator|Form}
      */
     this.parent = parent;
@@ -57,7 +57,7 @@ class Input {
     /**
      * The type of the input field.
      *
-     * @member Input#member
+     * @member FormField#type
      * @type {InputType}
      */
     this.type = this.initType(type);
@@ -67,7 +67,7 @@ class Input {
     /**
      * Validations for the input.
      *
-     * @member Input#validations
+     * @member FormField#validations
      * @type {Array.<function>}
      */
     this.validations = Object.assign(defaultValidations, validations);
@@ -75,7 +75,7 @@ class Input {
     /**
      * Specific style for the input.
      *
-     * @member Input#style
+     * @member FormField#style
      * @prop {String} validClass
      * @prop {String} invalidClass
      */
@@ -85,7 +85,7 @@ class Input {
      * Callback on input initialization.
      * Return <code>false</code> if you don't want validity classes to be applied.
      *
-     * @membre Input#onInit
+     * @member FormField#onInit
      * @type {Function}
      */
     this.onInit = onInit;
@@ -94,7 +94,7 @@ class Input {
      * Callback on input value change.
      * Return <code>false</code> if you don't want validity classes to be applied.
      *
-     * @member Input#onChange
+     * @member FormField#onChange
      * @type {Function}
      */
     this.onChange = onChange;
@@ -102,7 +102,7 @@ class Input {
     /**
      * The validity state of the input.
      *
-     * @member Input#valid
+     * @member FormField#valid
      * @type {Boolean}
      */
     this.valid = false;
@@ -123,7 +123,7 @@ class Input {
       }
 
       const typeAttr = $input.getAttribute('type');
-      return typeAttr ? Input.attrToType(typeAttr) : InputTypes.NONE;
+      return typeAttr ? FormField.attrToType(typeAttr) : InputTypes.NONE;
     }
 
     return type;
@@ -266,4 +266,4 @@ class Input {
   }
 }
 
-export default Input;
+export default FormField;

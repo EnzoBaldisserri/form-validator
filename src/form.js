@@ -1,4 +1,4 @@
-import Input from './input';
+import FormField from './formfield';
 
 /**
  * Representation of a controlled form element.
@@ -73,7 +73,7 @@ class Form {
      * The fields that are controlled in this form.
      *
      * @member Form#fields
-     * @type {Array.<Input>}
+     * @type {Array.<FormField>}
      */
     this.fields = this.initFields(fields);
 

@@ -1,5 +1,5 @@
 import { Validations } from './validations';
-import Input from './input';
+import FormField from './formfield';
 import Form from './form';
 import InputTypes from './inputTypes';
 
@@ -53,7 +53,7 @@ class Validator {
      * Input fields controlled by the validator.
      *
      * @member Validator#fields
-     * @type {Array.<Input>}
+     * @type {Array.<FormField>}
      */
     this.fields = this.initFields(fields);
 
@@ -92,7 +92,7 @@ class Validator {
     const { forms, fields } = this;
 
     forms.forEach(form => form.init());
-    fields.forEach(input => input.init());
+    fields.forEach(field => field.init());
   }
 }
 
