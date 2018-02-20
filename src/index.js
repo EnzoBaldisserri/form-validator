@@ -1,4 +1,4 @@
-import { Validations, addValidations } from './validations';
+import { Validations } from './validations';
 import Input from './input';
 import Form from './form';
 import InputTypes from './inputTypes';
@@ -15,7 +15,6 @@ class Validator {
       validClass: 'valid',
       invalidClass: 'valid',
     },
-    onValidityChange: null,
   }
 
   /**
@@ -27,15 +26,14 @@ class Validator {
       forms,
       fields,
       style,
-      onValidityChange,
     } = Object.assign({}, Validator.defaults, options);
 
-    if (!fields) {
-      throw new Error('No fields defined');
+    if (!forms && !fields) {
+      throw new Error('No forms nor fields defined');
     }
 
     /**
-     * General style of the form validator.
+     * General style for the children of the form validator.
      *
      * @member Validator#style
      * @prop {String} validClass
@@ -44,33 +42,20 @@ class Validator {
     this.style = style;
 
     /**
+     * Forms controlled by the validator.
      *
+     * @member Validator#forms
+     * @type {Array.<Form>}
      */
     this.forms = this.initForms(forms);
 
     /**
-     * Input fields to be validated.
+     * Input fields controlled by the validator.
      *
      * @member Validator#fields
      * @type {Array.<Input>}
      */
     this.fields = this.initFields(fields);
-
-    /**
-     * Function called when validity of the form changes.
-     *
-     * @member Validator#onValidityChange
-     * @type {Function}
-     */
-    this.onValidityChange = onValidityChange;
-
-    /**
-     * Correspond to the validity of the form.
-     *
-     * @member Validator#valid
-     * @type {Boolean}
-     */
-    this.valid = null;
 
     this.init();
   }
@@ -90,6 +75,7 @@ class Validator {
   }
 
   initFields = (fields) => {
+    // If there's one unique field
     if (!Array.isArray(fields)) {
       return [
         new Input(this, fields),
@@ -107,35 +93,11 @@ class Validator {
 
     forms.forEach(form => form.init());
     fields.forEach(input => input.init());
-
-    this.updateValidity();
-  }
-
-  /**
-   * Checks if the fields which are not in a form are valid.
-   * If necessary, updates the `valid` attribute and calls the custom `onValidityChange` function.
-   */
-  updateValidity = () => {
-    const {
-      fields,
-      onValidityChange,
-    } = this;
-
-    const valid = fields.reduce((fieldsValid, field) =>
-      fieldsValid && field.valid, true);
-
-    if (this.valid !== valid) {
-      this.valid = valid;
-      if (onValidityChange) {
-        onValidityChange(valid);
-      }
-    }
   }
 }
 
 export {
   Validator,
   Validations,
-  addValidations,
   InputTypes,
 };

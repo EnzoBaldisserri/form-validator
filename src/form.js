@@ -30,7 +30,7 @@ class Form {
 
     const $form = $el || document.forms[name];
     if (!$form || !($form instanceof HTMLFormElement)) {
-      throw new Error(`${$form} is not a form element`);
+      throw new Error(`${typeof $form} '${$form}' is not an HTMLFormElement`);
     }
 
     /**

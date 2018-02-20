@@ -18,7 +18,7 @@ function defaultRegexCountValidation(input, params, regex) {
 class Validation {
   constructor(repr, validate) {
     if (typeof validate !== 'function') {
-      throw new Error(`${validate} isn't a function`);
+      throw new Error(`${typeof validate} '${validate}' isn't a function`);
     }
 
     this.repr = repr;

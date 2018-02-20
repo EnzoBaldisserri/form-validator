@@ -32,10 +32,10 @@ class Input {
       onChange,
     } = Object.assign({}, Input.defaults, options);
 
-    const $input = $el || parent.$form.elements[name];
+    const $input = $el || parent.$form?.elements[name];
 
     if (!$input || !($input instanceof HTMLInputElement)) {
-      throw new Error(`${$input} is not an input field`);
+      throw new Error(`${typeof $input} '${$input}' is not an input field`);
     }
 
     /**
@@ -181,7 +181,7 @@ class Input {
     const isValid = !invalids.length;
     if (this.valid !== isValid) {
       this.valid = isValid;
-      parent.updateValidity();
+      parent.updateValidity?.();
     }
 
     return {
@@ -256,6 +256,7 @@ class Input {
     if (!inputType) {
       return InputTypes.NONE;
     }
+
     return inputType;
   }
 }
