@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="index.html">form-validator</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -16,8 +16,22 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav">
-            <li class="nav-item active">
-              <a class="nav-link" href="simple.html">Simple</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Validate the form
+              </a>
+              <div class="dropdown-menu">
+                <a href="validate_validations.html" class="dropdown-item active">With validations</a>
+                <a href="validate_attributes.html" class="dropdown-item">With attributes</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" data-toggle="dropdown">
+                Listen to changes
+              </a>
+              <div class="dropdown-menu">
+                <a href="listen_onChange.html" class="dropdown-item active">Input value changes</a>
+              </div>
             </li>
           </ul>
         </div>
@@ -27,27 +41,15 @@
       <div class="row">
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
-          <form name="simple-form" action="#" method="post">
-            <div class="form-group">
-              <label for="firstname">First name</label>
-              <!-- Having an input with 'required' attribute automatically sets NOT_EMPTY validation -->
-              <input type="text" name="firstname" id="firstname" autocomplete="given-name" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="surname">Surname</label>
-              <input type="text" name="surname" id="surname" autocomplete="family-name" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" name="email" id="email" autocomplete="email" class="form-control" required>
-            </div>
+          <form name="listen_onChange" action="#" method="post">
             <div class="form-group">
               <label for="birthday">Birthday</label>
               <input type="date" name="birthday" id="birthday" autocomplete="bday" class="form-control" required>
+              <small class="form-text text-muted">You must be between 18 and 100 years old to send this form</small>
             </div>
             <div class="form-group">
               <label for="age">Age</label>
-              <input type="number" name="age" id="age" class="form-control" readonly required>
+              <input type="number" name="age" id="age" class="form-control" readonly>
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
           </form>
@@ -61,7 +63,6 @@
     <script src="../lib/FormValidator.js"></script>
     <script>
       var Validator = FormValidator.Validator;
-      var InputTypes = FormValidator.InputTypes;
       var V = FormValidator.Validations;
 
       // Choose minimum and maximum age
@@ -105,36 +106,23 @@
             : nowMonth < birthMonth);
       }
 
-      // Initialization of the form validator
       new Validator({
         forms: {
-          name: 'simple-form',
+          name: 'listen_onChange',
           fields: [
-            {
-              name: 'firstname',
-              validations: [
-                V.LETTERS({ min: 2, max: 20 }),
-                V.NUMBERS({ count: 0 }),
-                V.SPECIAL_CHARACTERS({ count: 0 }),
-              ],
-            },
-            {
-              name: 'surname',
-              validations: [
-                V.LETTERS({ min: 2, max: 20 }),
-                V.NUMBERS({ count: 0 }),
-                V.SPECIAL_CHARACTERS({ count: 0 }),
-              ],
-            },
-            {
-              name: 'email',
-            },
             {
               name: 'birthday',
               validations: [
                 V.DATE_BETWEEN(bdayProperties),
               ],
               onChange: function(event, value, properties) {
+                // Display the information text only if the value of the fields is invalid
+                if (properties.isValid) {
+                  event.target.nextElementSibling.classList.add('invisible');
+                } else {
+                  event.target.nextElementSibling.classList.remove('invisible');
+                }
+
                 var birthday = new Date(value);
                 var age = computeAge(birthday);
 
@@ -142,14 +130,13 @@
                   return false;
                 }
 
-                var $age = document.forms['simple-form'].elements['age'];
+                var $age = event.target.form.elements['age'];
                 $age.value = age;
                 $age.dispatchEvent(new Event('input'));
               },
             },
             {
               name: 'age',
-              type: InputTypes.POSITIVE_NUMBER,
               validations: [
                 V.VALUE_IN(ageProperties),
               ],
@@ -164,8 +151,9 @@
         style: {
           validClass: 'is-valid',
           invalidClass: 'is-invalid',
-        },
+        }
       });
+
     </script>
   </body>
 </html>

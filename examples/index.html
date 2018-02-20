@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="index.html">form-validator</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -16,8 +16,22 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="simple.html">Simple</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Validate the form
+              </a>
+              <div class="dropdown-menu">
+                <a href="validate_validations.html" class="dropdown-item">With validations</a>
+                <a href="validate_attributes.html" class="dropdown-item">With attributes</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Listen to changes
+              </a>
+              <div class="dropdown-menu">
+                <a href="listen_onChange.html" class="dropdown-item">Input value changes</a>
+              </div>
             </li>
           </ul>
         </div>
