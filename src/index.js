@@ -96,8 +96,12 @@ class Validator {
   }
 }
 
+function create(options) {
+  return new Validator(options);
+}
+
 export {
-  Validator,
+  create,
   Validations,
   InputTypes,
 };
