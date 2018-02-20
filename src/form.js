@@ -9,6 +9,7 @@ class Form {
     $el: null,
     name: null,
     fields: [],
+    submit: null,
     style: {},
     onValidityChange: null,
   }
@@ -24,6 +25,7 @@ class Form {
       $el,
       name,
       fields,
+      submit,
       style,
       onValidityChange,
     } = Object.assign({}, Form.defaults, options);
@@ -48,6 +50,15 @@ class Form {
      * @type {FormValidator}
      */
     this.parent = parent;
+
+    /**
+     * The submit button of the form.
+     * It is enabled when all the fields are valid.
+     *
+     * @member Form#$submit
+     * @type {HTMLButtonElement|HTMLInputElement}
+     */
+    this.$submit = this.initSubmit(submit);
 
     /**
      * Style specific to the form and its fields.
@@ -83,6 +94,30 @@ class Form {
     this.valid = undefined;
   }
 
+  initSubmit = (submit) => {
+    if (submit === true) {
+      return this.$form.querySelector('[type=submit]');
+    }
+
+    if (typeof submit === 'string' || typeof submit === 'number') {
+      return this.$form.elements[submit];
+    }
+
+    if (submit instanceof HTMLButtonElement || submit instanceof HTMLInputElement) {
+      if (submit.type !== 'submit') {
+        throw new Error(`Button or input ${submit} isn't of type 'submit'`);
+      }
+
+      if (submit.form !== this.$form) {
+        throw new Error(`Submit button or input ${submit} isn't part of the form it's associated to.`);
+      }
+
+      return submit;
+    }
+
+    return null;
+  }
+
   initFields = fields =>
     fields.map(field => new Input(
       this,
@@ -98,13 +133,18 @@ class Form {
   }
 
   updateValidity = () => {
-    const { fields } = this;
+    const { fields, $submit } = this;
 
     const valid = fields.reduce((formValid, field) =>
       formValid && field.valid, true);
 
     if (this.valid !== valid) {
       this.valid = valid;
+
+      if ($submit) {
+        $submit.disabled = !valid;
+      }
+
       if (this.onValidityChange) {
         this.onValidityChange(valid);
       }
