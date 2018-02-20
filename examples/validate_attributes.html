@@ -86,7 +86,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="../lib/FormValidator.js"></script>
     <script>
-      var Validator = FormValidator.Validator;
       var V = FormValidator.Validations;
 
       var ageProperties = {
@@ -115,24 +114,10 @@
       $birthday.max = bdayProperties.max;
 
       // Initialization of the form validator
-      new Validator({
+      FormValidator.create({
         forms: {
           name: 'validate_form_with_attributes',
-          fields: [
-            {
-              name: 'firstname',
-            },
-            {
-              name: 'surname',
-            },
-            {
-              name: 'email',
-              // Automatically has V.EMAIL()
-            },
-            {
-              name: 'birthday',
-            },
-          ],
+          // 'fields' aren't submitted so all inputs in the form will be checked
           submit: true,
         },
         style: {
