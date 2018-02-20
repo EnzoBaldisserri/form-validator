@@ -119,14 +119,20 @@ class Form {
   }
 
   initFields = (fields) => {
+    // If fields isn't defined, get all fields of the form
+    const controlled = fields.length
+      ? fields
+      : Array.of(...this.$form.elements).filter(el =>
+        el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement);
+
     // If there's one unique field
-    if (!Array.isArray(fields)) {
+    if (!Array.isArray(controlled)) {
       return [
-        FormField.initFormField(this, fields),
+        FormField.initFormField(this, controlled),
       ];
     }
 
-    return fields.map(field => FormField.initFormField(this, field));
+    return controlled.map(field => FormField.initFormField(this, field));
   }
 
   init = () => {
