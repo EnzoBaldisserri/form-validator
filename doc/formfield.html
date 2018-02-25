@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple form-validator</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/highlight.js/atom-one-dark.css">
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Documentation</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a href="formvalidator.html" class="nav-link">FormValidator</a>
+            </li>
+            <li class="nav-item">
+              <a href="validations.html" class="nav-link">Validations</a>
+            </li>
+            <li class="nav-item">
+              <a href="inputtypes.html" class="nav-link">InputTypes</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Elements
+              </a>
+
+              <div class="dropdown-menu">
+                <a href="form.html" class="dropdown-item">Form</a>
+                <a href="formfield.html" class="dropdown-item">FormField</a>
+                <a href="style.html" class="dropdown-item">Style</a>
+              </div>
+            </li>
+            <li class="nav-item ml-md-3">
+              <a href="examples/index.html" class="nav-link">See examples</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <h1 class="mb-3">Form Field</h1>
+
+      <p>
+        A <code>FormField</code> is the representation or an HTML input fieldset
+        controlled by the validator.
+      </p>
+
+      <section id="outline">
+        <h3>Outline</h3>
+
+  <pre><code class="lang-js">  {
+    $el:             null,             // The HTML input field
+    name:            null,             // The name of the field, if it's an a form
+    type:            InputTypes.NONE,  // The type of the input
+    validations:     [],               // The validations required for the input to be valid
+    style: {
+      validClass:    null,             // Class applied when the input is valid
+      invalidClass:  null              // Class applied when the input is invalid
+    },
+    onInit:          null,             // Callback function called at the initialization of the field
+    onChange:        null,             // Callback function called when the value of the field changes
+  }</code></pre>
+      </section>
+
+      <section id="details">
+        <h3>Details</h3>
+
+        <article id="el">
+          <h4><code>$el</code></h4>
+          <p>
+            The HTML element.<br>
+            Must be either an &lt;input&gt; or a &lt;textarea&gt;.
+          </p>
+        </article>
+
+        <article id="name">
+          <h4><code>name</code></h4>
+          <p>
+            The name of the element.<br>
+            This option is available only if the input field is in a form
+            in the <a href="formvalidator.html#forms">forms</a> parameter.
+          </p>
+        </article>
+
+        <p class="alert alert-danger">
+          Either <code>$el</code> or <code>name</code> must be set !
+          If both are, <code>$el</code> has priority over <code>name</code>.
+        </p>
+
+        <article id="type">
+          <h4><code>type</code></h4>
+          <p>
+            The type of the field. (see <a href="inputtypes.html">input types</a>)<br>
+            If not given, the type will be taken from the
+            <code>type</code> attribute if there is one, else it defaults to
+            <a href="inputtypes.html#none">InputTypes.NONE</a>.
+          </p>
+        </article>
+
+  		  <article id="validations">
+          <h4><code>validations</code></h4>
+          <p>
+            An array of validations. (see <a href="validations.html">validations</a>)<br>
+            The validations represents the conditions for the field to be valid.
+          </p>
+          <p>E.g.</p>
+  <pre><code class="lang-js">  [
+    Validations.NOT_EMPTY(),
+    Validations.VALUE_IN({ min: 0, max: 50 }, 'my name'),
+  ]</code></pre>
+
+        </article>
+
+        <article id="style">
+    			<h4><code>style</code></h4>
+    			<p>
+    			  A <a href="style.html">Style</a> object.<br>
+    			  The style to be applied specifically to this element.<br>
+    			  This style cannot be overrided by anything in the library.<br>
+    			  If not set, it is herited from it's parent style
+    			  (either <a href="form.html#style">Form style</a> or
+    			  <a href="formvalidator.html#style">FormValidator style</a>).
+    			</p>
+        </article>
+
+    		<article id="onInit">
+    			<h4><code>onInit(value, properties)</code></h4>
+    			<p>
+    			  Called when initializing the field.
+    			  Returning <code>false</code> or setting <code>onInit</code> to
+    			  <code>false</code> will prevent from applying validity classes to the element.
+    			</p>
+    		</article>
+
+    		<article id="onChange">
+    			<h4><code>onChange(event, value, properties)</code> </h4>
+    			<p>
+    			  Called when the value of the field changes.
+    			  Returning <code>false</code>  will remove the validity classes from the element
+    			</p>
+    		</article>
+
+        <div class="alert alert-info">
+          <p>
+            The <code>properties</code> argument for both <code>onInit</code>
+            and <code>onChange</code> is an object having this fields:
+          </p>
+
+          <ul>
+            <li>isValid: Whether the input is valid or not</li>
+            <li>valids: List of successfully passed validators</li>
+            <li>invalids: List of unsuccessfully passed validators</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="assets/highlight.js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

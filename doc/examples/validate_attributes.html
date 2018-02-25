@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Simple form-validator</title>
+    <title>form-validator - Examples</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   </head>
   <body>
     <header>
       <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="index.html">form-validator</a>
+        <a class="navbar-brand" href="index.html">Examples</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,8 +21,8 @@
                 Validate the form
               </a>
               <div class="dropdown-menu">
-                <a href="validate_validations.html" class="dropdown-item active">With validations</a>
-                <a href="validate_attributes.html" class="dropdown-item">With attributes</a>
+                <a href="validate_validations.html" class="dropdown-item">With validations</a>
+                <a href="validate_attributes.html" class="dropdown-item active">With attributes</a>
               </div>
             </li>
             <li class="nav-item dropdown">
@@ -33,6 +33,9 @@
                 <a href="listen_onChange.html" class="dropdown-item">Input value changes</a>
               </div>
             </li>
+            <li class="nav-item ml-md-3">
+              <a href="../index.html" class="nav-link">See documentation</a>
+            </li>
           </ul>
         </div>
       </nav>
@@ -41,22 +44,39 @@
       <div class="row">
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
-          <form name="validate_form_with_validations" action="#" method="post">
+          <form name="validate_form_with_attributes" action="#" method="post">
             <div class="form-group">
               <label for="firstname">First name</label>
-              <input type="text" name="firstname" id="firstname" autocomplete="given-name" class="form-control">
+              <input
+                type="text"
+                name="firstname"
+                id="firstname"
+                autocomplete="given-name"
+                class="form-control"
+                required
+                maxlength="20"
+                pattern="^[A-Za-z ]{2,20}$"
+              >
             </div>
             <div class="form-group">
               <label for="surname">Surname</label>
-              <input type="text" name="surname" id="surname" autocomplete="family-name" class="form-control">
+              <input type="text"
+                name="surname"
+                id="surname"
+                autocomplete="family-name"
+                class="form-control"
+                required
+                maxlength="20"
+                pattern="^[A-Za-z ]{2,20}$"
+              >
             </div>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" name="email" id="email" autocomplete="email" class="form-control">
+              <input type="email" name="email" id="email" autocomplete="email" class="form-control" required>
             </div>
             <div class="form-group">
               <label for="birthday">Birthday</label>
-              <input type="date" name="birthday" id="birthday" autocomplete="bday" class="form-control">
+              <input type="date" name="birthday" id="birthday" autocomplete="bday" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
           </form>
@@ -67,7 +87,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="../lib/FormValidator.js"></script>
+    <script src="../../lib/FormValidator.js"></script>
     <script>
       var V = FormValidator.Validations;
 
@@ -88,44 +108,19 @@
         return {
           min: minDate,
           max: maxDate,
-        }
+        };
       }(ageProperties);
+
+      // Apply minDate and maxDate as 'min' and 'max' attributes of the birthday input
+      var $birthday = document.getElementById('birthday');
+      $birthday.min = bdayProperties.min;
+      $birthday.max = bdayProperties.max;
 
       // Initialization of the form validator
       FormValidator.create({
         forms: {
-          name: 'validate_form_with_validations',
-          fields: [
-            {
-              name: 'firstname',
-              validations: [
-                V.NOT_EMPTY(),
-                V.LETTERS({ max: 20 }),
-                V.NUMBERS({ count: 0 }),
-                V.SPECIAL_CHARACTERS({ count: 0 }),
-              ],
-            },
-            {
-              name: 'surname',
-              validations: [
-                V.NOT_EMPTY(),
-                V.LETTERS({ min: 2, max: 20 }),
-                V.NUMBERS({ count: 0 }),
-                V.SPECIAL_CHARACTERS({ count: 0 }),
-              ],
-            },
-            {
-              name: 'email',
-              // Automatically has V.EMAIL()
-            },
-            {
-              name: 'birthday',
-              validations: [
-                V.NOT_EMPTY(),
-                V.DATE_BETWEEN(bdayProperties),
-              ],
-            },
-          ],
+          name: 'validate_form_with_attributes',
+          // 'fields' aren't submitted so all inputs in the form will be checked
           submit: true,
         },
         style: {

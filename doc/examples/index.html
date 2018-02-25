@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>form-validator - Examples</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Examples</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Validate the form
+              </a>
+              <div class="dropdown-menu">
+                <a href="validate_validations.html" class="dropdown-item">With validations</a>
+                <a href="validate_attributes.html" class="dropdown-item">With attributes</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
+                Listen to changes
+              </a>
+              <div class="dropdown-menu">
+                <a href="listen_onChange.html" class="dropdown-item">Input value changes</a>
+              </div>
+            </li>
+            <li class="nav-item ml-md-3">
+              <a href="../index.html" class="nav-link">See documentation</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main class="container">
+      <h1 class="mb-3">Examples</h1>
+      <article>
+        <h3>Validations</h3>
+        <dl>
+          <dt><a href="validate_validations.html">Validate with Validations</a></dt>
+          <dd>Validate the form with <code>validations</code> from the library.</dd>
+          <dt><a href="validate_attributes.html">Validate with attributes</a></dt>
+          <dd>
+            Validate the form with the HTML validation-related attributes
+            that are converted into <code>validations</code>.
+          </dd>
+          <!-- Add complex validation with password -->
+        </dl>
+      </article>
+      <article>
+        <h3>State listening</h3>
+        <dl>
+          <dt><a href="listen_onChange.html">Input changes</a></dt>
+          <dd>Listen to the changes of an input field to update the value of another one.</dd>
+        </dl>
+      </article>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>

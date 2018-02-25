@@ -2,14 +2,14 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Simple form-validator</title>
+    <title>form-validator - Examples</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   </head>
   <body>
     <header>
       <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="index.html">form-validator</a>
+        <a class="navbar-brand" href="index.html">Examples</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -17,21 +17,24 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle active" data-toggle="dropdown">
+              <a class="nav-link dropdown-toggle" data-toggle="dropdown">
                 Validate the form
               </a>
               <div class="dropdown-menu">
                 <a href="validate_validations.html" class="dropdown-item">With validations</a>
-                <a href="validate_attributes.html" class="dropdown-item active">With attributes</a>
+                <a href="validate_attributes.html" class="dropdown-item">With attributes</a>
               </div>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown active">
               <a class="nav-link dropdown-toggle" data-toggle="dropdown">
                 Listen to changes
               </a>
               <div class="dropdown-menu">
-                <a href="listen_onChange.html" class="dropdown-item">Input value changes</a>
+                <a href="listen_onChange.html" class="dropdown-item active">Input value changes</a>
               </div>
+            </li>
+            <li class="nav-item ml-md-3">
+              <a href="../index.html" class="nav-link">See documentation</a>
             </li>
           </ul>
         </div>
@@ -41,39 +44,15 @@
       <div class="row">
         <div class="col col-sm-8 offset-2">
           <h1 class="pb-3">Simple form example</h1>
-          <form name="validate_form_with_attributes" action="#" method="post">
-            <div class="form-group">
-              <label for="firstname">First name</label>
-              <input
-                type="text"
-                name="firstname"
-                id="firstname"
-                autocomplete="given-name"
-                class="form-control"
-                required
-                maxlength="20"
-                pattern="^[A-Za-z ]{2,20}$"
-              >
-            </div>
-            <div class="form-group">
-              <label for="surname">Surname</label>
-              <input type="text"
-                name="surname"
-                id="surname"
-                autocomplete="family-name"
-                class="form-control"
-                required
-                maxlength="20"
-                pattern="^[A-Za-z ]{2,20}$"
-              >
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" name="email" id="email" autocomplete="email" class="form-control" required>
-            </div>
+          <form name="listen_onChange" action="#" method="post">
             <div class="form-group">
               <label for="birthday">Birthday</label>
               <input type="date" name="birthday" id="birthday" autocomplete="bday" class="form-control" required>
+              <small class="form-text text-muted">You must be between 18 and 100 years old to send this form</small>
+            </div>
+            <div class="form-group">
+              <label for="age">Age</label>
+              <input type="number" name="age" id="age" class="form-control" readonly>
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
           </form>
@@ -84,47 +63,99 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="../lib/FormValidator.js"></script>
+    <script src="../../lib/FormValidator.js"></script>
     <script>
       var V = FormValidator.Validations;
 
+      // Choose minimum and maximum age
       var ageProperties = {
         min: 18,
         max: 100,
       };
 
+      // Compute minimum and maximum date
+      // for age to be between min and max
       var bdayProperties = function(ageProperties) {
         const minDate = new Date();
         const maxDate = new Date();
 
         minDate.setFullYear(
           minDate.getFullYear() - (ageProperties.max + 1));
+
         maxDate.setFullYear(
           maxDate.getFullYear() - ageProperties.min);
 
         return {
           min: minDate,
           max: maxDate,
-        };
+        }
       }(ageProperties);
 
-      // Apply minDate and maxDate as 'min' and 'max' attributes of the birthday input
-      var $birthday = document.getElementById('birthday');
-      $birthday.min = bdayProperties.min;
-      $birthday.max = bdayProperties.max;
+      // Compute current age
+      var computeAge = function(birthday) {
+        if (Number.isNaN(birthday.getTime())) {
+          return false;
+        }
 
-      // Initialization of the form validator
+        var now = new Date();
+
+        var birthMonth = birthday.getMonth();
+        var nowMonth = now.getMonth();
+
+        return now.getFullYear() - birthday.getFullYear()
+          - (birthMonth === nowMonth
+            ? now.getDate() < birthday.getDate()
+            : nowMonth < birthMonth);
+      }
+
       FormValidator.create({
         forms: {
-          name: 'validate_form_with_attributes',
-          // 'fields' aren't submitted so all inputs in the form will be checked
+          name: 'listen_onChange',
+          fields: [
+            {
+              name: 'birthday',
+              validations: [
+                V.DATE_BETWEEN(bdayProperties),
+              ],
+              onChange: function(event, value, properties) {
+                // Display the information text only if the value of the fields is invalid
+                if (properties.isValid) {
+                  event.target.nextElementSibling.classList.add('invisible');
+                } else {
+                  event.target.nextElementSibling.classList.remove('invisible');
+                }
+
+                var birthday = new Date(value);
+                var age = computeAge(birthday);
+
+                if (age === false) {
+                  return false;
+                }
+
+                var $age = event.target.form.elements['age'];
+                $age.value = age;
+                $age.dispatchEvent(new Event('input'));
+              },
+            },
+            {
+              name: 'age',
+              validations: [
+                V.VALUE_IN(ageProperties),
+              ],
+              onChange: (event, value) => {
+                // Return false when the value is empty so input isn't marked as invalid
+                return !!value.length;
+              },
+            },
+          ],
           submit: true,
         },
         style: {
           validClass: 'is-valid',
           invalidClass: 'is-invalid',
-        },
+        }
       });
+
     </script>
   </body>
 </html>
